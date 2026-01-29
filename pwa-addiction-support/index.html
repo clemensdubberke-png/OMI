@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#2c3e50">
+  <meta name="description" content="Unterstützung und Soforthilfe - Bleib stark.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Stark Bleiben</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ===== NAVIGATION ===== -->
+  <header class="header">
+    <button class="menu-toggle" id="menuToggle" aria-label="Menü öffnen">☰</button>
+    <h1 class="header-title">Stark Bleiben</h1>
+  </header>
+
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <div class="sidebar-content">
+      <button class="sidebar-close" id="sidebarClose" aria-label="Menü schließen">✕</button>
+      <ul class="nav-list">
+        <li><a href="#" class="nav-link active" data-page="home">🏠 Startseite</a></li>
+        <li><a href="#" class="nav-link" data-page="tasks">📋 Meine Aufgaben</a></li>
+        <li><a href="#" class="nav-link" data-page="info">ℹ️ Info</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <main class="main-content">
+
+    <!-- STARTSEITE -->
+    <section class="page page-home active" id="pageHome">
+      <div class="home-container">
+        <p class="home-subtitle">Du bist nicht allein.</p>
+        <button class="emergency-btn" id="emergencyBtn" aria-label="Hilfe jetzt">
+          <span class="emergency-btn-inner">
+            <span class="emergency-btn-highlight"></span>
+          </span>
+          <span class="emergency-text">Ich brauche<br>Hilfe JETZT</span>
+        </button>
+        <p class="home-hint">Drücke den Button, wenn du Unterstützung brauchst.</p>
+      </div>
+    </section>
+
+    <!-- AUFGABEN-ANZEIGE -->
+    <section class="page page-task" id="pageTask">
+      <div class="task-container">
+        <div class="task-phase-label">Phase 1 — Sofort-Hilfe</div>
+        <div class="task-card" id="taskCard">
+          <div class="task-icon" id="taskIcon">💪</div>
+          <h2 class="task-title" id="taskTitle">Aufgabe</h2>
+          <p class="task-description" id="taskDescription">Beschreibung</p>
+        </div>
+        <div class="task-actions" id="taskActions">
+          <button class="btn btn-accept" id="btnAccept">✓ Mache ich</button>
+          <button class="btn btn-skip" id="btnSkip">Andere Aufgabe →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- TIMER -->
+    <section class="page page-timer" id="pageTimer">
+      <div class="timer-container">
+        <div class="timer-task-name" id="timerTaskName">Aufgabe</div>
+        <div class="timer-display" id="timerDisplay">00:00</div>
+        <div class="timer-progress-ring">
+          <svg viewBox="0 0 200 200" class="timer-svg">
+            <circle class="timer-bg" cx="100" cy="100" r="90" />
+            <circle class="timer-fg" id="timerFg" cx="100" cy="100" r="90" />
+          </svg>
+        </div>
+        <button class="btn btn-start" id="btnStartTimer">▶ Timer starten</button>
+        <button class="btn btn-done hidden" id="btnTimerDone">✓ Aufgabe erledigt</button>
+      </div>
+    </section>
+
+    <!-- AUFGABE OHNE TIMER — "Erledigt" Button -->
+    <section class="page page-confirm" id="pageConfirm">
+      <div class="confirm-container">
+        <div class="confirm-task-name" id="confirmTaskName">Aufgabe</div>
+        <p class="confirm-hint">Erledige die Aufgabe und bestätige dann hier:</p>
+        <button class="btn btn-accept btn-large" id="btnConfirmDone">✓ Aufgabe erledigt</button>
+      </div>
+    </section>
+
+    <!-- ERFOLG -->
+    <section class="page page-success" id="pageSuccess">
+      <div class="success-container">
+        <div class="success-icon">🌟</div>
+        <h2 class="success-title">Super!</h2>
+        <p class="success-text">Bleib stark. Du schaffst das.</p>
+        <p class="success-streak" id="successStreak"></p>
+        <button class="btn btn-home" id="btnBackHome">← Zurück zur Startseite</button>
+      </div>
+    </section>
+
+    <!-- MEINE AUFGABEN -->
+    <section class="page page-my-tasks" id="pageMyTasks">
+      <div class="my-tasks-container">
+        <h2 class="page-title">Meine erledigten Aufgaben</h2>
+        <div class="stats-card">
+          <div class="stat">
+            <span class="stat-number" id="statTotal">0</span>
+            <span class="stat-label">Aufgaben erledigt</span>
+          </div>
+          <div class="stat">
+            <span class="stat-number" id="statToday">0</span>
+            <span class="stat-label">Heute</span>
+          </div>
+        </div>
+        <ul class="task-history" id="taskHistory">
+          <li class="task-history-empty">Noch keine Aufgaben erledigt.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- INFO -->
+    <section class="page page-info" id="pageInfo">
+      <div class="info-container">
+        <h2 class="page-title">Über diese App</h2>
+        <div class="info-card">
+          <p>Diese App hilft dir in schwierigen Momenten. Wenn du einen Drang verspürst, drücke den Notfall-Button und folge der vorgeschlagenen Aufgabe.</p>
+          <p>Die Aufgaben sind so gestaltet, dass sie dich ablenken und den Moment überbrücken. Jeder geschaffte Moment macht dich stärker.</p>
+        </div>
+        <div class="info-card">
+          <h3>So funktioniert's</h3>
+          <ol class="info-list">
+            <li>Drücke den roten Notfall-Button</li>
+            <li>Du bekommst eine zufällige Aufgabe</li>
+            <li>Führe die Aufgabe aus oder wähle eine andere</li>
+            <li>Bestätige, wenn du fertig bist</li>
+          </ol>
+        </div>
+        <div class="info-card">
+          <h3>Hilfe &amp; Beratung</h3>
+          <p>Wenn du professionelle Hilfe brauchst:</p>
+          <ul class="info-list">
+            <li>Telefonseelsorge: <strong>0800 111 0 111</strong> (kostenlos, 24/7)</li>
+            <li>Online-Beratung: <strong>online.telefonseelsorge.de</strong></li>
+          </ul>
+        </div>
+        <p class="info-version">Version 1.0 — Deine Daten bleiben auf deinem Gerät.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Audio für Timer-Ende -->
+  <audio id="timerSound" preload="auto">
+    <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgipq0markup" type="audio/wav">
+  </audio>
+
+  <script src="app.js"></script>
+</body>
+</html>
