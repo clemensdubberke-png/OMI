@@ -36,11 +36,17 @@ html, body {
 
 /* ===== MAIN MENU ===== */
 
+#main-menu {
+    background: radial-gradient(ellipse at 50% 40%, #0a1628 0%, #050a12 50%, #000 100%);
+}
+
 .menu-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 20px;
+    z-index: 2;
+    position: relative;
 }
 
 .symbol-row {
@@ -54,7 +60,8 @@ html, body {
     flex-direction: column;
     align-items: center;
     cursor: pointer;
-    transition: transform 0.2s ease, opacity 0.2s ease;
+    transition: transform 0.3s ease, opacity 0.2s ease;
+    position: relative;
 }
 
 .symbol-item:active {
@@ -67,6 +74,8 @@ html, body {
     height: 140px;
     object-fit: cover;
     border-radius: 16px;
+    position: relative;
+    z-index: 2;
 }
 
 .bottom-row .symbol-img {
@@ -80,6 +89,136 @@ html, body {
     font-weight: 600;
     letter-spacing: 2px;
     color: rgba(255, 255, 255, 0.7);
+}
+
+/* ===== GLOW RINGS ===== */
+
+.glow-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 160px;
+    height: 160px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    z-index: 1;
+    pointer-events: none;
+    animation: glow-pulse 3s ease-in-out infinite;
+}
+
+.bottom-row .glow-ring {
+    width: 150px;
+    height: 150px;
+}
+
+.glow-ice {
+    background: radial-gradient(circle, rgba(70, 160, 220, 0.35) 0%, rgba(70, 160, 220, 0) 70%);
+    box-shadow: 0 0 40px rgba(70, 160, 220, 0.2), 0 0 80px rgba(70, 160, 220, 0.1);
+}
+
+.glow-bronze {
+    background: radial-gradient(circle, rgba(200, 160, 80, 0.3) 0%, rgba(200, 160, 80, 0) 70%);
+    box-shadow: 0 0 40px rgba(200, 160, 80, 0.15), 0 0 80px rgba(200, 160, 80, 0.08);
+}
+
+@keyframes glow-pulse {
+    0%, 100% { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
+    50% { opacity: 1; transform: translate(-50%, -50%) scale(1.08); }
+}
+
+/* ===== FOG EFFECT ===== */
+
+.fog-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.fog {
+    position: absolute;
+    width: 200%;
+    height: 100%;
+    background: repeating-linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(100, 140, 180, 0.04) 10%,
+        rgba(100, 140, 180, 0.07) 20%,
+        transparent 30%,
+        rgba(80, 120, 160, 0.05) 45%,
+        transparent 55%
+    );
+    filter: blur(30px);
+}
+
+.fog-1 {
+    top: 10%;
+    left: -50%;
+    animation: fog-drift 20s linear infinite;
+    opacity: 0.8;
+}
+
+.fog-2 {
+    top: 40%;
+    left: -80%;
+    animation: fog-drift 28s linear infinite;
+    opacity: 0.5;
+    height: 60%;
+}
+
+.fog-3 {
+    top: 60%;
+    left: -30%;
+    animation: fog-drift-reverse 24s linear infinite;
+    opacity: 0.6;
+    height: 50%;
+    background: repeating-linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(150, 130, 80, 0.03) 15%,
+        rgba(150, 130, 80, 0.05) 25%,
+        transparent 40%
+    );
+    filter: blur(40px);
+}
+
+@keyframes fog-drift {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(50%); }
+}
+
+@keyframes fog-drift-reverse {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
+/* ===== PARTICLES CANVAS ===== */
+
+#particles-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* ===== VIGNETTE ===== */
+
+.vignette {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(ellipse at center, transparent 40%, rgba(0, 0, 0, 0.7) 100%);
+    z-index: 1;
+    pointer-events: none;
 }
 
 /* ===== BACK BUTTON ===== */

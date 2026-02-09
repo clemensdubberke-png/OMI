@@ -275,6 +275,65 @@ function stopAllTimers() {
     if (roundsInterval) { clearInterval(roundsInterval); roundsInterval = null; }
 }
 
+// ===== FLOATING PARTICLES =====
+
+(function initParticles() {
+    const canvas = document.getElementById('particles-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let w, h;
+    const particles = [];
+    const COUNT = 40;
+
+    function resize() {
+        w = canvas.width = canvas.offsetWidth;
+        h = canvas.height = canvas.offsetHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    for (let i = 0; i < COUNT; i++) {
+        const isIce = Math.random() > 0.4;
+        particles.push({
+            x: Math.random() * w,
+            y: Math.random() * h,
+            r: Math.random() * 2 + 0.5,
+            dx: (Math.random() - 0.5) * 0.3,
+            dy: -Math.random() * 0.4 - 0.1,
+            alpha: Math.random() * 0.4 + 0.1,
+            color: isIce ? [100, 170, 220] : [200, 170, 90],
+            pulse: Math.random() * Math.PI * 2,
+            pulseSpeed: Math.random() * 0.02 + 0.005,
+        });
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, w, h);
+        for (const p of particles) {
+            p.x += p.dx;
+            p.y += p.dy;
+            p.pulse += p.pulseSpeed;
+            const a = p.alpha * (0.5 + 0.5 * Math.sin(p.pulse));
+            if (p.y < -10) { p.y = h + 10; p.x = Math.random() * w; }
+            if (p.x < -10) p.x = w + 10;
+            if (p.x > w + 10) p.x = -10;
+
+            const [r, g, b] = p.color;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(${r},${g},${b},${a})`;
+            ctx.fill();
+            // Soft glow
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r * 3, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(${r},${g},${b},${a * 0.2})`;
+            ctx.fill();
+        }
+        requestAnimationFrame(draw);
+    }
+    draw();
+})();
+
 // ===== SERVICE WORKER =====
 
 if ('serviceWorker' in navigator) {

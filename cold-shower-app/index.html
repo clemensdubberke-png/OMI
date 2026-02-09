@@ -14,17 +14,31 @@
 
     <!-- ===== MAIN MENU SCREEN ===== -->
     <div id="main-menu" class="screen active">
+        <!-- Fog layers -->
+        <div class="fog-wrapper">
+            <div class="fog fog-1"></div>
+            <div class="fog fog-2"></div>
+            <div class="fog fog-3"></div>
+        </div>
+        <!-- Floating particles -->
+        <canvas id="particles-canvas"></canvas>
+        <!-- Subtle vignette -->
+        <div class="vignette"></div>
+
         <div class="menu-container">
             <div class="symbol-row top-row">
                 <div class="symbol-item" id="kaelte-btn">
+                    <div class="glow-ring glow-ice"></div>
                     <img src="kaelte.jpg" alt="Kälte" class="symbol-img">
                 </div>
             </div>
             <div class="symbol-row bottom-row">
                 <div class="symbol-item" id="geist-btn">
+                    <div class="glow-ring glow-bronze"></div>
                     <img src="geist.jpg" alt="Geist" class="symbol-img">
                 </div>
                 <div class="symbol-item" id="atem-btn">
+                    <div class="glow-ring glow-bronze"></div>
                     <img src="atem.jpg" alt="Atem" class="symbol-img">
                 </div>
             </div>
