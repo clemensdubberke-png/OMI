@@ -223,6 +223,8 @@ document.getElementById('rounds-start').addEventListener('click', () => {
     playClick();
     roundsData = [];
     roundsElapsed = 0;
+    document.getElementById('rounds-stop-round').style.display = '';
+    document.getElementById('rounds-next-round').style.display = 'none';
     showView('tracker-rounds', 'rounds-active');
     startNewRound();
 });
@@ -260,13 +262,17 @@ document.getElementById('rounds-stop-round').addEventListener('click', () => {
     roundsData.push(roundsElapsed);
     if (navigator.vibrate) navigator.vibrate([300]);
     updateRoundsInfo();
-    // Auto-start next round after brief pause
     document.getElementById('rounds-phase').textContent = 'PAUSE';
     document.getElementById('rounds-display').textContent = formatTime(roundsElapsed);
-    setTimeout(() => {
-        if (document.getElementById('rounds-active').classList.contains('hidden')) return;
-        startNewRound();
-    }, 1500);
+    document.getElementById('rounds-stop-round').style.display = 'none';
+    document.getElementById('rounds-next-round').style.display = '';
+});
+
+document.getElementById('rounds-next-round').addEventListener('click', () => {
+    playClick();
+    document.getElementById('rounds-next-round').style.display = 'none';
+    document.getElementById('rounds-stop-round').style.display = '';
+    startNewRound();
 });
 
 document.getElementById('rounds-finish').addEventListener('click', () => {
