@@ -1,55 +1,4 @@
-// ===== SCREEN NAVIGATION =====
-
-function showScreen(screenId) {
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById(screenId).classList.add('active');
-}
-
-// Main Menu -> Kälte
-document.getElementById('kaelte-btn').addEventListener('click', () => {
-    showScreen('kaelte-menu');
-});
-
-// Kälte -> Main Menu
-document.getElementById('back-to-main').addEventListener('click', () => {
-    showScreen('main-menu');
-});
-
-// Kälte -> Eisdusche Tracker
-document.getElementById('eisdusche-btn').addEventListener('click', () => {
-    showScreen('tracker-screen');
-    showTrackerView('setup-view');
-});
-
-// Tracker -> Kälte
-document.getElementById('back-to-kaelte').addEventListener('click', () => {
-    stopTimer();
-    showScreen('kaelte-menu');
-});
-
-// Geist & Atem placeholders
-document.getElementById('geist-btn').addEventListener('click', () => {
-    // Placeholder - future functionality
-});
-document.getElementById('atem-btn').addEventListener('click', () => {
-    // Placeholder - future functionality
-});
-
-// ===== TRACKER VIEW SWITCHING =====
-
-function showTrackerView(viewId) {
-    document.querySelectorAll('.tracker-view').forEach(v => v.classList.add('hidden'));
-    document.getElementById(viewId).classList.remove('hidden');
-}
-
-// ===== SLIDERS =====
-
-const prepSlider = document.getElementById('prep-slider');
-const tempSlider = document.getElementById('temp-slider');
-const durationSlider = document.getElementById('duration-slider');
-const prepValue = document.getElementById('prep-value');
-const tempValue = document.getElementById('temp-value');
-const durationValue = document.getElementById('duration-value');
+// ===== UTILITIES =====
 
 function formatTime(seconds) {
     const m = Math.floor(seconds / 60);
@@ -57,136 +6,276 @@ function formatTime(seconds) {
     return `${m}:${s.toString().padStart(2, '0')}`;
 }
 
-prepSlider.addEventListener('input', () => {
-    const val = parseInt(prepSlider.value);
-    prepValue.textContent = val === 0 ? 'Aus' : formatTime(val);
-});
-
-tempSlider.addEventListener('input', () => {
-    tempValue.textContent = `${tempSlider.value}°C`;
-});
-
-durationSlider.addEventListener('input', () => {
-    durationValue.textContent = formatTime(parseInt(durationSlider.value));
-});
-
-// ===== TIMER =====
-
-let timerInterval = null;
-let remainingSeconds = 0;
-let totalPhaseSeconds = 0;
-let currentPhase = 'prep'; // 'prep' or 'shower'
-let showerDuration = 0;
-let showerTemp = 0;
-
-const timerPhase = document.getElementById('timer-phase');
-const timerDisplay = document.getElementById('timer-display');
-const timerTempDisplay = document.getElementById('timer-temp');
-const progressCircle = document.getElementById('progress-circle');
-const circumference = 2 * Math.PI * 90; // r=90
-
-progressCircle.style.strokeDasharray = circumference;
-
-function updateProgress() {
-    const progress = remainingSeconds / totalPhaseSeconds;
-    const offset = circumference * (1 - progress);
-    progressCircle.style.strokeDashoffset = offset;
+function showScreen(screenId) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(screenId).classList.add('active');
 }
 
-function tick() {
-    remainingSeconds--;
-    timerDisplay.textContent = formatTime(remainingSeconds);
-    updateProgress();
+function showView(parentId, viewId) {
+    const parent = document.getElementById(parentId);
+    parent.querySelectorAll('.tracker-view').forEach(v => v.classList.add('hidden'));
+    document.getElementById(viewId).classList.remove('hidden');
+}
 
-    if (remainingSeconds <= 0) {
-        if (currentPhase === 'prep') {
-            startShowerPhase();
-        } else {
-            finishTimer();
+const CIRC = 2 * Math.PI * 90;
+
+// ===== MAIN MENU NAVIGATION =====
+
+document.getElementById('kaelte-btn').addEventListener('click', () => showScreen('kaelte-menu'));
+document.getElementById('back-to-main').addEventListener('click', () => showScreen('main-menu'));
+document.getElementById('geist-btn').addEventListener('click', () => {});
+document.getElementById('atem-btn').addEventListener('click', () => {});
+
+// Back buttons for all tracker screens
+document.querySelectorAll('.back-to-kaelte').forEach(btn => {
+    btn.addEventListener('click', () => {
+        stopAllTimers();
+        showScreen('kaelte-menu');
+    });
+});
+
+// ===== KÄLTE MENU ITEMS =====
+
+document.querySelectorAll('.kaelte-item').forEach(item => {
+    item.addEventListener('click', () => {
+        const target = item.dataset.target;
+        if (target === 'eisdusche') {
+            showScreen('tracker-eisdusche');
+            showView('tracker-eisdusche', 'eisdusche-setup');
+        } else if (target === 'eisbaden') {
+            showScreen('tracker-eisbaden');
+            showView('tracker-eisbaden', 'eisbaden-setup');
+        } else if (target === 'gesicht' || target === 'hand' || target === 'fuss') {
+            openRoundsTracker(target);
+        }
+    });
+});
+
+// ===== COUNTDOWN TRACKER (shared for Eisdusche & Eisbaden) =====
+
+function createCountdownTracker(prefix, screenId, activityLabel) {
+    const els = {
+        prep: document.getElementById(`${prefix}-prep`),
+        temp: document.getElementById(`${prefix}-temp`),
+        dur: document.getElementById(`${prefix}-dur`),
+        prepVal: document.getElementById(`${prefix}-prep-val`),
+        tempVal: document.getElementById(`${prefix}-temp-val`),
+        durVal: document.getElementById(`${prefix}-dur-val`),
+        phase: document.getElementById(`${prefix}-phase`),
+        display: document.getElementById(`${prefix}-display`),
+        tempShow: document.getElementById(`${prefix}-temp-show`),
+        progress: document.querySelector(`.${prefix}-progress`),
+        statDur: document.getElementById(`${prefix}-stat-dur`),
+        statTemp: document.getElementById(`${prefix}-stat-temp`),
+    };
+
+    els.progress.style.strokeDasharray = CIRC;
+
+    let interval = null;
+    let remaining = 0;
+    let total = 0;
+    let phase = 'prep';
+    let duration = 0;
+    let temp = 0;
+
+    // Slider listeners
+    els.prep.addEventListener('input', () => {
+        const v = parseInt(els.prep.value);
+        els.prepVal.textContent = v === 0 ? 'Aus' : formatTime(v);
+    });
+    els.temp.addEventListener('input', () => {
+        els.tempVal.textContent = `${els.temp.value}°C`;
+    });
+    els.dur.addEventListener('input', () => {
+        els.durVal.textContent = formatTime(parseInt(els.dur.value));
+    });
+
+    function updateProgress() {
+        const offset = CIRC * (1 - remaining / total);
+        els.progress.style.strokeDashoffset = offset;
+    }
+
+    function tick() {
+        remaining--;
+        els.display.textContent = formatTime(remaining);
+        updateProgress();
+        if (remaining <= 0) {
+            if (phase === 'prep') startMain();
+            else finish();
         }
     }
+
+    function startPrep() {
+        duration = parseInt(els.dur.value);
+        temp = parseInt(els.temp.value);
+        const prepTime = parseInt(els.prep.value);
+        if (prepTime === 0) { startMain(); return; }
+        phase = 'prep';
+        remaining = prepTime;
+        total = prepTime;
+        els.phase.textContent = 'VORBEREITUNG';
+        els.display.textContent = formatTime(remaining);
+        els.tempShow.textContent = '';
+        els.progress.style.stroke = '#4a9eda';
+        els.progress.style.strokeDashoffset = 0;
+        interval = setInterval(tick, 1000);
+    }
+
+    function startMain() {
+        if (interval) clearInterval(interval);
+        phase = 'main';
+        remaining = duration;
+        total = duration;
+        els.phase.textContent = activityLabel;
+        els.display.textContent = formatTime(remaining);
+        els.tempShow.textContent = `${temp}°C`;
+        els.progress.style.stroke = '#00bfff';
+        els.progress.style.strokeDashoffset = 0;
+        if (navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 200]);
+        interval = setInterval(tick, 1000);
+    }
+
+    function finish() {
+        if (interval) clearInterval(interval);
+        interval = null;
+        if (navigator.vibrate) navigator.vibrate([500, 200, 500]);
+        els.statDur.textContent = formatTime(duration);
+        els.statTemp.textContent = `${temp}°C`;
+        showView(screenId, `${prefix.replace('-', '')}-done`);
+    }
+
+    function stop() {
+        if (interval) clearInterval(interval);
+        interval = null;
+    }
+
+    // Wire buttons
+    const setupId = prefix === 'ed' ? 'eisdusche' : 'eisbaden';
+    document.getElementById(`${prefix}-start`).addEventListener('click', () => {
+        showView(screenId, `${setupId}-timer`);
+        startPrep();
+    });
+    document.getElementById(`${prefix}-stop`).addEventListener('click', () => {
+        stop();
+        showView(screenId, `${setupId}-setup`);
+    });
+    document.getElementById(`${prefix}-done`).addEventListener('click', () => {
+        showView(screenId, `${setupId}-setup`);
+    });
+
+    return { stop };
 }
 
-function startPrepPhase() {
-    const prepTime = parseInt(prepSlider.value);
-    showerDuration = parseInt(durationSlider.value);
-    showerTemp = parseInt(tempSlider.value);
+const eisduscheTracker = createCountdownTracker('ed', 'tracker-eisdusche', 'KALTE DUSCHE');
+const eisbadenTracker = createCountdownTracker('eb', 'tracker-eisbaden', 'EISBADEN');
 
-    if (prepTime === 0) {
-        startShowerPhase();
+// ===== ROUNDS TRACKER (Gesicht / Hand / Fuß) =====
+
+const roundsConfig = {
+    gesicht: { title: 'GESICHT INS EIS', img: 'gesicht.jpg' },
+    hand: { title: 'HAND INS EIS', img: 'hand.jpg' },
+    fuss: { title: 'FUSS INS EIS', img: 'fuss.jpg' },
+};
+
+let roundsInterval = null;
+let roundsElapsed = 0;
+let roundsData = [];
+let currentRoundsType = 'gesicht';
+
+function openRoundsTracker(type) {
+    currentRoundsType = type;
+    const cfg = roundsConfig[type];
+    document.getElementById('rounds-title').textContent = cfg.title;
+    document.getElementById('rounds-icon').src = cfg.img;
+    showScreen('tracker-rounds');
+    showView('tracker-rounds', 'rounds-setup');
+}
+
+document.getElementById('rounds-temp').addEventListener('input', () => {
+    document.getElementById('rounds-temp-val').textContent =
+        `${document.getElementById('rounds-temp').value}°C`;
+});
+
+document.getElementById('rounds-start').addEventListener('click', () => {
+    roundsData = [];
+    roundsElapsed = 0;
+    showView('tracker-rounds', 'rounds-active');
+    startNewRound();
+});
+
+function startNewRound() {
+    roundsElapsed = 0;
+    const roundNum = roundsData.length + 1;
+    document.getElementById('rounds-phase').textContent = `RUNDE ${roundNum}`;
+    document.getElementById('rounds-display').textContent = '0:00';
+    document.getElementById('rounds-temp-show').textContent =
+        `${document.getElementById('rounds-temp').value}°C`;
+    updateRoundsInfo();
+    if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+    roundsInterval = setInterval(() => {
+        roundsElapsed++;
+        document.getElementById('rounds-display').textContent = formatTime(roundsElapsed);
+    }, 1000);
+}
+
+function updateRoundsInfo() {
+    const info = document.getElementById('rounds-info');
+    if (roundsData.length === 0) {
+        info.innerHTML = '';
         return;
     }
-
-    currentPhase = 'prep';
-    remainingSeconds = prepTime;
-    totalPhaseSeconds = prepTime;
-
-    timerPhase.textContent = 'VORBEREITUNG';
-    timerDisplay.textContent = formatTime(remainingSeconds);
-    timerTempDisplay.textContent = '';
-    progressCircle.style.stroke = '#4a9eda';
-    updateProgress();
-
-    timerInterval = setInterval(tick, 1000);
+    info.innerHTML = roundsData.map((r, i) =>
+        `<div class="round-result">Runde ${i + 1}: <strong>${formatTime(r)}</strong></div>`
+    ).join('');
 }
 
-function startShowerPhase() {
-    if (timerInterval) clearInterval(timerInterval);
+document.getElementById('rounds-stop-round').addEventListener('click', () => {
+    if (roundsInterval) clearInterval(roundsInterval);
+    roundsInterval = null;
+    roundsData.push(roundsElapsed);
+    if (navigator.vibrate) navigator.vibrate([300]);
+    updateRoundsInfo();
+    // Auto-start next round after brief pause
+    document.getElementById('rounds-phase').textContent = 'PAUSE';
+    document.getElementById('rounds-display').textContent = formatTime(roundsElapsed);
+    setTimeout(() => {
+        if (document.getElementById('rounds-active').classList.contains('hidden')) return;
+        startNewRound();
+    }, 1500);
+});
 
-    currentPhase = 'shower';
-    remainingSeconds = showerDuration;
-    totalPhaseSeconds = showerDuration;
-
-    timerPhase.textContent = 'KALTE DUSCHE';
-    timerDisplay.textContent = formatTime(remainingSeconds);
-    timerTempDisplay.textContent = `${showerTemp}°C`;
-    progressCircle.style.stroke = '#00bfff';
-    progressCircle.style.strokeDashoffset = 0;
-
-    // Vibrate to signal start of cold shower
-    if (navigator.vibrate) {
-        navigator.vibrate([200, 100, 200, 100, 200]);
+document.getElementById('rounds-finish').addEventListener('click', () => {
+    if (roundsInterval) {
+        clearInterval(roundsInterval);
+        roundsInterval = null;
+        if (roundsElapsed > 0) roundsData.push(roundsElapsed);
     }
-
-    timerInterval = setInterval(tick, 1000);
-}
-
-function finishTimer() {
-    if (timerInterval) clearInterval(timerInterval);
-    timerInterval = null;
-
-    if (navigator.vibrate) {
-        navigator.vibrate([500, 200, 500]);
-    }
-
-    document.getElementById('stat-duration').textContent = formatTime(showerDuration);
-    document.getElementById('stat-temp').textContent = `${showerTemp}°C`;
-
-    showTrackerView('done-view');
-}
-
-function stopTimer() {
-    if (timerInterval) clearInterval(timerInterval);
-    timerInterval = null;
-    showTrackerView('setup-view');
-}
-
-document.getElementById('start-btn').addEventListener('click', () => {
-    showerDuration = parseInt(durationSlider.value);
-    showerTemp = parseInt(tempSlider.value);
-    showTrackerView('timer-view');
-    startPrepPhase();
+    if (navigator.vibrate) navigator.vibrate([500, 200, 500]);
+    const totalSecs = roundsData.reduce((a, b) => a + b, 0);
+    // Summary
+    document.getElementById('rounds-summary').innerHTML = roundsData.map((r, i) =>
+        `<div class="round-result">Runde ${i + 1}: <strong>${formatTime(r)}</strong></div>`
+    ).join('');
+    document.getElementById('rounds-stat-count').textContent = roundsData.length;
+    document.getElementById('rounds-stat-total').textContent = formatTime(totalSecs);
+    document.getElementById('rounds-stat-temp').textContent =
+        `${document.getElementById('rounds-temp').value}°C`;
+    showView('tracker-rounds', 'rounds-done');
 });
 
-document.getElementById('stop-btn').addEventListener('click', () => {
-    stopTimer();
+document.getElementById('rounds-done-btn').addEventListener('click', () => {
+    showView('tracker-rounds', 'rounds-setup');
 });
 
-document.getElementById('done-btn').addEventListener('click', () => {
-    showTrackerView('setup-view');
-});
+// ===== STOP ALL TIMERS =====
 
-// ===== SERVICE WORKER REGISTRATION =====
+function stopAllTimers() {
+    eisduscheTracker.stop();
+    eisbadenTracker.stop();
+    if (roundsInterval) { clearInterval(roundsInterval); roundsInterval = null; }
+}
+
+// ===== SERVICE WORKER =====
 
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch(() => {});

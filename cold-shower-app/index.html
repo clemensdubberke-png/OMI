@@ -34,79 +34,173 @@
     <!-- ===== KÄLTE SUB-MENU SCREEN ===== -->
     <div id="kaelte-menu" class="screen">
         <button class="back-btn" id="back-to-main">&larr;</button>
-        <div class="kaelte-container">
-            <div class="eisdusche-symbol" id="eisdusche-btn">
-                <img src="eisdusche.jpg" alt="Eisdusche" class="eisdusche-img">
-                <span class="symbol-label">EISDUSCHE</span>
+        <div class="kaelte-menu-grid">
+            <div class="kaelte-row">
+                <div class="kaelte-item" data-target="eisdusche">
+                    <img src="eisdusche.jpg" alt="Eisdusche" class="kaelte-item-img">
+                    <span class="kaelte-item-label">EISDUSCHE</span>
+                </div>
+                <div class="kaelte-item" data-target="eisbaden">
+                    <img src="eisbaden.jpg" alt="Eisbaden" class="kaelte-item-img">
+                    <span class="kaelte-item-label">EISBADEN</span>
+                </div>
+            </div>
+            <div class="kaelte-row">
+                <div class="kaelte-item" data-target="gesicht">
+                    <img src="gesicht.jpg" alt="Gesicht ins Eis" class="kaelte-item-img">
+                    <span class="kaelte-item-label">GESICHT</span>
+                </div>
+                <div class="kaelte-item" data-target="hand">
+                    <img src="hand.jpg" alt="Hand ins Eis" class="kaelte-item-img">
+                    <span class="kaelte-item-label">HAND</span>
+                </div>
+            </div>
+            <div class="kaelte-row kaelte-row-center">
+                <div class="kaelte-item" data-target="fuss">
+                    <img src="fuss.jpg" alt="Fuß ins Eis" class="kaelte-item-img">
+                    <span class="kaelte-item-label">FUSS</span>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- ===== COLD SHOWER TRACKER SCREEN ===== -->
-    <div id="tracker-screen" class="screen">
-        <button class="back-btn" id="back-to-kaelte">&larr;</button>
-
-        <!-- Setup View -->
-        <div id="setup-view" class="tracker-view">
+    <!-- ===== EISDUSCHE TRACKER ===== -->
+    <div id="tracker-eisdusche" class="screen">
+        <button class="back-btn back-to-kaelte">&larr;</button>
+        <div id="eisdusche-setup" class="tracker-view">
             <h1 class="tracker-title">EISDUSCHE</h1>
             <img src="eisdusche.jpg" alt="Eisdusche" class="tracker-icon">
-
             <div class="slider-group">
                 <label class="slider-label">
                     <span class="label-text">Vorbereitung</span>
-                    <span class="label-value" id="prep-value">1:00</span>
+                    <span class="label-value" id="ed-prep-val">1:00</span>
                 </label>
-                <input type="range" id="prep-slider" class="slider" min="0" max="300" value="60" step="15">
+                <input type="range" id="ed-prep" class="slider" min="0" max="300" value="60" step="15">
             </div>
-
             <div class="slider-group">
                 <label class="slider-label">
                     <span class="label-text">Wassertemperatur</span>
-                    <span class="label-value" id="temp-value">10°C</span>
+                    <span class="label-value" id="ed-temp-val">10°C</span>
                 </label>
-                <input type="range" id="temp-slider" class="slider temp-slider" min="1" max="20" value="10" step="1">
+                <input type="range" id="ed-temp" class="slider temp-slider" min="1" max="20" value="10" step="1">
             </div>
-
             <div class="slider-group">
                 <label class="slider-label">
                     <span class="label-text">Duschdauer</span>
-                    <span class="label-value" id="duration-value">2:00</span>
+                    <span class="label-value" id="ed-dur-val">2:00</span>
                 </label>
-                <input type="range" id="duration-slider" class="slider" min="15" max="600" value="120" step="15">
+                <input type="range" id="ed-dur" class="slider" min="15" max="600" value="120" step="15">
             </div>
-
-            <button class="start-btn" id="start-btn">START</button>
+            <button class="start-btn" id="ed-start">START</button>
         </div>
-
-        <!-- Timer View -->
-        <div id="timer-view" class="tracker-view hidden">
-            <div class="timer-phase" id="timer-phase">VORBEREITUNG</div>
-            <div class="timer-display" id="timer-display">1:00</div>
-            <div class="timer-temp" id="timer-temp"></div>
+        <div id="eisdusche-timer" class="tracker-view hidden">
+            <div class="timer-phase" id="ed-phase">VORBEREITUNG</div>
+            <div class="timer-display" id="ed-display">1:00</div>
+            <div class="timer-temp" id="ed-temp-show"></div>
             <div class="progress-ring-container">
                 <svg class="progress-ring" viewBox="0 0 200 200">
                     <circle class="progress-ring-bg" cx="100" cy="100" r="90"/>
-                    <circle class="progress-ring-fill" id="progress-circle" cx="100" cy="100" r="90"/>
+                    <circle class="progress-ring-fill ed-progress" cx="100" cy="100" r="90"/>
                 </svg>
             </div>
-            <button class="stop-btn" id="stop-btn">ABBRECHEN</button>
+            <button class="stop-btn" id="ed-stop">ABBRECHEN</button>
         </div>
-
-        <!-- Done View -->
-        <div id="done-view" class="tracker-view hidden">
+        <div id="eisdusche-done" class="tracker-view hidden">
             <div class="done-icon">&#10003;</div>
             <h2 class="done-title">GESCHAFFT!</h2>
             <div class="done-stats">
-                <div class="stat">
-                    <span class="stat-label">Dauer</span>
-                    <span class="stat-value" id="stat-duration"></span>
-                </div>
-                <div class="stat">
-                    <span class="stat-label">Temperatur</span>
-                    <span class="stat-value" id="stat-temp"></span>
-                </div>
+                <div class="stat"><span class="stat-label">Dauer</span><span class="stat-value" id="ed-stat-dur"></span></div>
+                <div class="stat"><span class="stat-label">Temperatur</span><span class="stat-value" id="ed-stat-temp"></span></div>
             </div>
-            <button class="start-btn" id="done-btn">ZURÜCK</button>
+            <button class="start-btn" id="ed-done">ZURÜCK</button>
+        </div>
+    </div>
+
+    <!-- ===== EISBADEN TRACKER ===== -->
+    <div id="tracker-eisbaden" class="screen">
+        <button class="back-btn back-to-kaelte">&larr;</button>
+        <div id="eisbaden-setup" class="tracker-view">
+            <h1 class="tracker-title">EISBADEN</h1>
+            <img src="eisbaden.jpg" alt="Eisbaden" class="tracker-icon">
+            <div class="slider-group">
+                <label class="slider-label">
+                    <span class="label-text">Vorbereitung</span>
+                    <span class="label-value" id="eb-prep-val">1:00</span>
+                </label>
+                <input type="range" id="eb-prep" class="slider" min="0" max="300" value="60" step="15">
+            </div>
+            <div class="slider-group">
+                <label class="slider-label">
+                    <span class="label-text">Wassertemperatur</span>
+                    <span class="label-value" id="eb-temp-val">5°C</span>
+                </label>
+                <input type="range" id="eb-temp" class="slider temp-slider" min="1" max="20" value="5" step="1">
+            </div>
+            <div class="slider-group">
+                <label class="slider-label">
+                    <span class="label-text">Badedauer</span>
+                    <span class="label-value" id="eb-dur-val">2:00</span>
+                </label>
+                <input type="range" id="eb-dur" class="slider" min="15" max="600" value="120" step="15">
+            </div>
+            <button class="start-btn" id="eb-start">START</button>
+        </div>
+        <div id="eisbaden-timer" class="tracker-view hidden">
+            <div class="timer-phase" id="eb-phase">VORBEREITUNG</div>
+            <div class="timer-display" id="eb-display">1:00</div>
+            <div class="timer-temp" id="eb-temp-show"></div>
+            <div class="progress-ring-container">
+                <svg class="progress-ring" viewBox="0 0 200 200">
+                    <circle class="progress-ring-bg" cx="100" cy="100" r="90"/>
+                    <circle class="progress-ring-fill eb-progress" cx="100" cy="100" r="90"/>
+                </svg>
+            </div>
+            <button class="stop-btn" id="eb-stop">ABBRECHEN</button>
+        </div>
+        <div id="eisbaden-done" class="tracker-view hidden">
+            <div class="done-icon">&#10003;</div>
+            <h2 class="done-title">GESCHAFFT!</h2>
+            <div class="done-stats">
+                <div class="stat"><span class="stat-label">Dauer</span><span class="stat-value" id="eb-stat-dur"></span></div>
+                <div class="stat"><span class="stat-label">Temperatur</span><span class="stat-value" id="eb-stat-temp"></span></div>
+            </div>
+            <button class="start-btn" id="eb-done">ZURÜCK</button>
+        </div>
+    </div>
+
+    <!-- ===== ROUND-BASED TRACKER (Gesicht / Hand / Fuß) ===== -->
+    <div id="tracker-rounds" class="screen">
+        <button class="back-btn back-to-kaelte">&larr;</button>
+        <div id="rounds-setup" class="tracker-view">
+            <h1 class="tracker-title" id="rounds-title">GESICHT INS EIS</h1>
+            <img id="rounds-icon" src="gesicht.jpg" alt="" class="tracker-icon">
+            <div class="slider-group">
+                <label class="slider-label">
+                    <span class="label-text">Wassertemperatur</span>
+                    <span class="label-value" id="rounds-temp-val">5°C</span>
+                </label>
+                <input type="range" id="rounds-temp" class="slider temp-slider" min="1" max="20" value="5" step="1">
+            </div>
+            <button class="start-btn" id="rounds-start">START</button>
+        </div>
+        <div id="rounds-active" class="tracker-view hidden">
+            <div class="timer-phase" id="rounds-phase">RUNDE 1</div>
+            <div class="timer-display" id="rounds-display">0:00</div>
+            <div class="timer-temp" id="rounds-temp-show"></div>
+            <div class="rounds-info" id="rounds-info"></div>
+            <button class="stop-btn round-stop-btn" id="rounds-stop-round">RUNDE BEENDEN</button>
+            <button class="finish-btn" id="rounds-finish">KOMPLETT BEENDEN</button>
+        </div>
+        <div id="rounds-done" class="tracker-view hidden">
+            <div class="done-icon">&#10003;</div>
+            <h2 class="done-title">GESCHAFFT!</h2>
+            <div class="rounds-summary" id="rounds-summary"></div>
+            <div class="done-stats">
+                <div class="stat"><span class="stat-label">Runden</span><span class="stat-value" id="rounds-stat-count"></span></div>
+                <div class="stat"><span class="stat-label">Gesamt</span><span class="stat-value" id="rounds-stat-total"></span></div>
+                <div class="stat"><span class="stat-label">Temperatur</span><span class="stat-value" id="rounds-stat-temp"></span></div>
+            </div>
+            <button class="start-btn" id="rounds-done-btn">ZURÜCK</button>
         </div>
     </div>
 

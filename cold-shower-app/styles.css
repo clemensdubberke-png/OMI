@@ -27,7 +27,7 @@ html, body {
     align-items: center;
     justify-content: center;
     background: #000;
-    transition: opacity 0.3s ease;
+    overflow-y: auto;
 }
 
 .screen.active {
@@ -65,7 +65,7 @@ html, body {
 .symbol-img {
     width: 140px;
     height: 140px;
-    object-fit: contain;
+    object-fit: cover;
     border-radius: 16px;
 }
 
@@ -107,16 +107,27 @@ html, body {
     background: rgba(255, 255, 255, 0.25);
 }
 
-/* ===== KÄLTE SUB-MENU ===== */
+/* ===== KÄLTE SUB-MENU GRID ===== */
 
-.kaelte-container {
+.kaelte-menu-grid {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 30px;
+    gap: 16px;
+    padding: 20px;
 }
 
-.eisdusche-symbol {
+.kaelte-row {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+}
+
+.kaelte-row-center {
+    justify-content: center;
+}
+
+.kaelte-item {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -124,16 +135,24 @@ html, body {
     transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
-.eisdusche-symbol:active {
+.kaelte-item:active {
     transform: scale(0.93);
     opacity: 0.8;
 }
 
-.eisdusche-img {
-    width: 180px;
-    height: 180px;
-    object-fit: contain;
-    border-radius: 20px;
+.kaelte-item-img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 16px;
+}
+
+.kaelte-item-label {
+    margin-top: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: rgba(255, 255, 255, 0.7);
 }
 
 /* ===== TRACKER SCREEN ===== */
@@ -162,7 +181,7 @@ html, body {
 .tracker-icon {
     width: 90px;
     height: 90px;
-    object-fit: contain;
+    object-fit: cover;
     border-radius: 14px;
     margin-bottom: 5px;
 }
@@ -226,7 +245,7 @@ html, body {
     box-shadow: 0 0 10px rgba(0, 191, 255, 0.5);
 }
 
-/* ===== START / STOP BUTTONS ===== */
+/* ===== BUTTONS ===== */
 
 .start-btn {
     margin-top: 10px;
@@ -265,6 +284,34 @@ html, body {
 
 .stop-btn:active {
     background: rgba(255, 255, 255, 0.2);
+}
+
+.round-stop-btn {
+    background: linear-gradient(135deg, #1a5276, #2e86c1);
+    color: #fff;
+    border: none;
+    padding: 16px 50px;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.finish-btn {
+    margin-top: 12px;
+    padding: 12px 30px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.finish-btn:active {
+    background: rgba(255, 255, 255, 0.15);
 }
 
 /* ===== TIMER VIEW ===== */
@@ -320,6 +367,26 @@ html, body {
     transition: stroke-dashoffset 0.5s linear;
 }
 
+/* ===== ROUNDS INFO ===== */
+
+.rounds-info, .rounds-summary {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    margin: 10px 0;
+}
+
+.round-result {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.5);
+    letter-spacing: 1px;
+}
+
+.round-result strong {
+    color: #b0d4f1;
+}
+
 /* ===== DONE VIEW ===== */
 
 .done-icon {
@@ -345,7 +412,7 @@ html, body {
 
 .done-stats {
     display: flex;
-    gap: 40px;
+    gap: 30px;
     margin: 10px 0 30px;
 }
 
@@ -380,6 +447,10 @@ html, body {
         width: 100px;
         height: 100px;
     }
+    .kaelte-item-img {
+        width: 90px;
+        height: 90px;
+    }
     .tracker-icon {
         width: 60px;
         height: 60px;
@@ -401,5 +472,9 @@ html, body {
     .bottom-row .symbol-img {
         width: 150px;
         height: 150px;
+    }
+    .kaelte-item-img {
+        width: 140px;
+        height: 140px;
     }
 }
