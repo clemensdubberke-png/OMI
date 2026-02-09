@@ -1,3 +1,20 @@
+// ===== SOUNDS =====
+
+const clickSound = new Audio('Klick.mp3');
+const gongSound = new Audio('Gong.mp3');
+clickSound.preload = 'auto';
+gongSound.preload = 'auto';
+
+function playClick() {
+    clickSound.currentTime = 0;
+    clickSound.play().catch(() => {});
+}
+
+function playGong() {
+    gongSound.currentTime = 0;
+    gongSound.play().catch(() => {});
+}
+
 // ===== UTILITIES =====
 
 function formatTime(seconds) {
@@ -21,14 +38,15 @@ const CIRC = 2 * Math.PI * 90;
 
 // ===== MAIN MENU NAVIGATION =====
 
-document.getElementById('kaelte-btn').addEventListener('click', () => showScreen('kaelte-menu'));
-document.getElementById('back-to-main').addEventListener('click', () => showScreen('main-menu'));
-document.getElementById('geist-btn').addEventListener('click', () => {});
-document.getElementById('atem-btn').addEventListener('click', () => {});
+document.getElementById('kaelte-btn').addEventListener('click', () => { playClick(); showScreen('kaelte-menu'); });
+document.getElementById('back-to-main').addEventListener('click', () => { playClick(); showScreen('main-menu'); });
+document.getElementById('geist-btn').addEventListener('click', () => { playClick(); });
+document.getElementById('atem-btn').addEventListener('click', () => { playClick(); });
 
 // Back buttons for all tracker screens
 document.querySelectorAll('.back-to-kaelte').forEach(btn => {
     btn.addEventListener('click', () => {
+        playClick();
         stopAllTimers();
         showScreen('kaelte-menu');
     });
@@ -38,6 +56,7 @@ document.querySelectorAll('.back-to-kaelte').forEach(btn => {
 
 document.querySelectorAll('.kaelte-item').forEach(item => {
     item.addEventListener('click', () => {
+        playClick();
         const target = item.dataset.target;
         if (target === 'eisdusche') {
             showScreen('tracker-eisdusche');
@@ -138,6 +157,7 @@ function createCountdownTracker(prefix, screenId, activityLabel) {
     function finish() {
         if (interval) clearInterval(interval);
         interval = null;
+        playGong();
         if (navigator.vibrate) navigator.vibrate([500, 200, 500]);
         els.statDur.textContent = formatTime(duration);
         els.statTemp.textContent = `${temp}°C`;
@@ -152,14 +172,17 @@ function createCountdownTracker(prefix, screenId, activityLabel) {
     // Wire buttons
     const setupId = prefix === 'ed' ? 'eisdusche' : 'eisbaden';
     document.getElementById(`${prefix}-start`).addEventListener('click', () => {
+        playClick();
         showView(screenId, `${setupId}-timer`);
         startPrep();
     });
     document.getElementById(`${prefix}-stop`).addEventListener('click', () => {
+        playClick();
         stop();
         showView(screenId, `${setupId}-setup`);
     });
     document.getElementById(`${prefix}-done`).addEventListener('click', () => {
+        playClick();
         showView(screenId, `${setupId}-setup`);
     });
 
@@ -197,6 +220,7 @@ document.getElementById('rounds-temp').addEventListener('input', () => {
 });
 
 document.getElementById('rounds-start').addEventListener('click', () => {
+    playClick();
     roundsData = [];
     roundsElapsed = 0;
     showView('tracker-rounds', 'rounds-active');
@@ -230,6 +254,7 @@ function updateRoundsInfo() {
 }
 
 document.getElementById('rounds-stop-round').addEventListener('click', () => {
+    playClick();
     if (roundsInterval) clearInterval(roundsInterval);
     roundsInterval = null;
     roundsData.push(roundsElapsed);
@@ -245,6 +270,7 @@ document.getElementById('rounds-stop-round').addEventListener('click', () => {
 });
 
 document.getElementById('rounds-finish').addEventListener('click', () => {
+    playClick();
     if (roundsInterval) {
         clearInterval(roundsInterval);
         roundsInterval = null;
@@ -264,6 +290,7 @@ document.getElementById('rounds-finish').addEventListener('click', () => {
 });
 
 document.getElementById('rounds-done-btn').addEventListener('click', () => {
+    playClick();
     showView('tracker-rounds', 'rounds-setup');
 });
 

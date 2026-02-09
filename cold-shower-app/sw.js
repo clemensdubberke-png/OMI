@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cold-shower-v6';
+const CACHE_NAME = 'cold-shower-v7';
 const ASSETS = [
     './',
     './index.html',
@@ -12,7 +12,9 @@ const ASSETS = [
     './eisbaden.jpg',
     './gesicht.jpg',
     './hand.jpg',
-    './fuss.jpg'
+    './fuss.jpg',
+    './Klick.mp3',
+    './Gong.mp3'
 ];
 
 self.addEventListener('install', event => {
