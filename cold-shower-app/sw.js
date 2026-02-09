@@ -1,14 +1,14 @@
-const CACHE_NAME = 'cold-shower-v2';
+const CACHE_NAME = 'cold-shower-v3';
 const ASSETS = [
     './',
     './index.html',
     './styles.css',
     './app.js',
     './manifest.json',
-    './kaelte.png',
-    './geist.png',
-    './atem.png',
-    './eisdusche.png'
+    './kaelte.jpg',
+    './geist.jpg',
+    './atem.jpg',
+    './eisdusche.jpg'
 ];
 
 self.addEventListener('install', event => {
