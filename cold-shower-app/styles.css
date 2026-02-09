@@ -36,7 +36,7 @@ html, body {
 
 /* ===== MAIN MENU ===== */
 
-#main-menu {
+.screen {
     background: radial-gradient(ellipse at 50% 40%, #0a1628 0%, #050a12 50%, #000 100%);
 }
 
@@ -198,7 +198,7 @@ html, body {
 
 /* ===== PARTICLES CANVAS ===== */
 
-#particles-canvas {
+.particles-canvas {
     position: absolute;
     top: 0;
     left: 0;
@@ -254,6 +254,8 @@ html, body {
     align-items: center;
     gap: 16px;
     padding: 20px;
+    position: relative;
+    z-index: 2;
 }
 
 .kaelte-row {
@@ -272,6 +274,17 @@ html, body {
     align-items: center;
     cursor: pointer;
     transition: transform 0.2s ease, opacity 0.2s ease;
+    position: relative;
+}
+
+.kaelte-item .glow-ring {
+    width: 140px;
+    height: 140px;
+}
+
+.kaelte-item .kaelte-item-img {
+    position: relative;
+    z-index: 2;
 }
 
 .kaelte-item:active {
@@ -303,6 +316,8 @@ html, body {
     width: 100%;
     padding: 20px 30px;
     gap: 18px;
+    position: relative;
+    z-index: 2;
 }
 
 .tracker-view.hidden {
