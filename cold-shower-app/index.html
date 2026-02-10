@@ -86,6 +86,32 @@
                 </label>
                 <input type="range" id="med-dur" class="slider med-slider" min="60" max="3600" value="600" step="60">
             </div>
+            <div class="music-selector">
+                <label class="slider-label">
+                    <span class="label-text">Musik</span>
+                    <span class="label-value" id="med-music-status">Aus</span>
+                </label>
+                <div class="music-options" id="med-music-options">
+                    <div class="music-option selected" data-src="">
+                        <span class="music-option-name">Keine Musik</span>
+                    </div>
+                    <div class="music-option" data-src="Gleichbleibender Strom.mp3">
+                        <span class="music-option-name">Gleichbleibender Strom</span>
+                    </div>
+                    <div class="music-option" data-src="Tiefer als die Welle.mp3">
+                        <span class="music-option-name">Tiefer als die Welle</span>
+                    </div>
+                    <div class="music-option" data-src="Nebel über meinem Kopf Version 1.mp3">
+                        <span class="music-option-name">Nebel über meinem Kopf</span>
+                    </div>
+                    <div class="music-option" data-src="Atem wie ein leiser Fluss.mp3">
+                        <span class="music-option-name">Atem wie ein leiser Fluss</span>
+                    </div>
+                    <div class="music-option" data-src="Mystic Drums.mp3">
+                        <span class="music-option-name">Mystic Drums</span>
+                    </div>
+                </div>
+            </div>
             <button class="start-btn" id="med-start">START</button>
         </div>
         <div id="meditation-timer" class="tracker-view hidden">

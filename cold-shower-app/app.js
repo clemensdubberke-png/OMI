@@ -321,6 +321,20 @@ medProgress.style.strokeDasharray = CIRC;
 let medInterval = null;
 let medRemaining = 0;
 let medTotal = 0;
+let medMusic = null;
+let selectedMusicSrc = '';
+
+// Music selection
+document.querySelectorAll('.music-option').forEach(opt => {
+    opt.addEventListener('click', () => {
+        playClick();
+        document.querySelectorAll('.music-option').forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+        selectedMusicSrc = opt.dataset.src;
+        document.getElementById('med-music-status').textContent =
+            selectedMusicSrc ? opt.querySelector('.music-option-name').textContent : 'Aus';
+    });
+});
 
 document.getElementById('med-dur').addEventListener('input', () => {
     const v = parseInt(document.getElementById('med-dur').value);
@@ -336,6 +350,12 @@ document.getElementById('med-start').addEventListener('click', () => {
     medProgress.style.stroke = '#c8a050';
     medProgress.style.strokeDashoffset = 0;
     showView('tracker-meditation', 'meditation-timer');
+    // Start music if selected
+    if (selectedMusicSrc) {
+        medMusic = new Audio(selectedMusicSrc);
+        medMusic.loop = true;
+        medMusic.play().catch(() => {});
+    }
     medInterval = setInterval(() => {
         medRemaining--;
         document.getElementById('med-display').textContent = formatTime(medRemaining);
@@ -344,6 +364,7 @@ document.getElementById('med-start').addEventListener('click', () => {
         if (medRemaining <= 0) {
             clearInterval(medInterval);
             medInterval = null;
+            stopMusicFadeOut();
             playGong();
             if (navigator.vibrate) navigator.vibrate([500, 200, 500]);
             document.getElementById('med-stat-dur').textContent = formatTime(medTotal);
@@ -363,8 +384,24 @@ document.getElementById('med-done').addEventListener('click', () => {
     showView('tracker-meditation', 'meditation-setup');
 });
 
+function stopMusicFadeOut() {
+    if (!medMusic) return;
+    let vol = medMusic.volume;
+    const fade = setInterval(() => {
+        vol -= 0.1;
+        if (vol <= 0) {
+            clearInterval(fade);
+            medMusic.pause();
+            medMusic = null;
+        } else {
+            medMusic.volume = vol;
+        }
+    }, 150);
+}
+
 function stopMeditation() {
     if (medInterval) { clearInterval(medInterval); medInterval = null; }
+    if (medMusic) { medMusic.pause(); medMusic = null; }
 }
 
 // ===== STOP ALL TIMERS =====

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cold-shower-v9';
+const CACHE_NAME = 'cold-shower-v10';
 const ASSETS = [
     './',
     './index.html',
@@ -15,7 +15,12 @@ const ASSETS = [
     './fuss.jpg',
     './meditation.jpg',
     './Klick.mp3',
-    './Gong.mp3'
+    './Gong.mp3',
+    './Gleichbleibender Strom.mp3',
+    './Tiefer als die Welle.mp3',
+    './Nebel über meinem Kopf Version 1.mp3',
+    './Atem wie ein leiser Fluss.mp3',
+    './Mystic Drums.mp3'
 ];
 
 self.addEventListener('install', event => {
