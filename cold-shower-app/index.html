@@ -45,6 +45,70 @@
         </div>
     </div>
 
+    <!-- ===== GEIST SUB-MENU SCREEN ===== -->
+    <div id="geist-menu" class="screen">
+        <div class="fog-wrapper">
+            <div class="fog fog-1"></div>
+            <div class="fog fog-2"></div>
+            <div class="fog fog-3"></div>
+        </div>
+        <canvas class="particles-canvas"></canvas>
+        <div class="vignette"></div>
+        <button class="back-btn" id="back-to-main-geist">&larr;</button>
+        <div class="kaelte-menu-grid">
+            <div class="kaelte-row kaelte-row-center">
+                <div class="kaelte-item" id="meditation-btn">
+                    <div class="glow-ring glow-bronze"></div>
+                    <img src="meditation.jpg" alt="Meditation" class="kaelte-item-img">
+                    <span class="kaelte-item-label">MEDITATION</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MEDITATION TRACKER ===== -->
+    <div id="tracker-meditation" class="screen">
+        <div class="fog-wrapper">
+            <div class="fog fog-1"></div>
+            <div class="fog fog-2"></div>
+            <div class="fog fog-3"></div>
+        </div>
+        <canvas class="particles-canvas"></canvas>
+        <div class="vignette"></div>
+        <button class="back-btn" id="back-to-geist">&larr;</button>
+        <div id="meditation-setup" class="tracker-view">
+            <h1 class="tracker-title">MEDITATION</h1>
+            <img src="meditation.jpg" alt="Meditation" class="tracker-icon">
+            <div class="slider-group">
+                <label class="slider-label">
+                    <span class="label-text">Dauer</span>
+                    <span class="label-value" id="med-dur-val">10:00</span>
+                </label>
+                <input type="range" id="med-dur" class="slider med-slider" min="60" max="3600" value="600" step="60">
+            </div>
+            <button class="start-btn" id="med-start">START</button>
+        </div>
+        <div id="meditation-timer" class="tracker-view hidden">
+            <div class="timer-phase" id="med-phase">MEDITATION</div>
+            <div class="timer-display" id="med-display">10:00</div>
+            <div class="progress-ring-container">
+                <svg class="progress-ring" viewBox="0 0 200 200">
+                    <circle class="progress-ring-bg" cx="100" cy="100" r="90"/>
+                    <circle class="progress-ring-fill med-progress" cx="100" cy="100" r="90"/>
+                </svg>
+            </div>
+            <button class="stop-btn" id="med-stop">ABBRECHEN</button>
+        </div>
+        <div id="meditation-done" class="tracker-view hidden">
+            <div class="done-icon">&#10003;</div>
+            <h2 class="done-title">NAMASTE</h2>
+            <div class="done-stats">
+                <div class="stat"><span class="stat-label">Dauer</span><span class="stat-value" id="med-stat-dur"></span></div>
+            </div>
+            <button class="start-btn" id="med-done">ZURÜCK</button>
+        </div>
+    </div>
+
     <!-- ===== KÄLTE SUB-MENU SCREEN ===== -->
     <div id="kaelte-menu" class="screen">
         <div class="fog-wrapper">

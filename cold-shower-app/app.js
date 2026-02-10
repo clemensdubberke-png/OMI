@@ -40,8 +40,9 @@ const CIRC = 2 * Math.PI * 90;
 
 document.getElementById('kaelte-btn').addEventListener('click', () => { playClick(); showScreen('kaelte-menu'); });
 document.getElementById('back-to-main').addEventListener('click', () => { playClick(); showScreen('main-menu'); });
-document.getElementById('geist-btn').addEventListener('click', () => { playClick(); });
+document.getElementById('geist-btn').addEventListener('click', () => { playClick(); showScreen('geist-menu'); });
 document.getElementById('atem-btn').addEventListener('click', () => { playClick(); });
+document.getElementById('back-to-main-geist').addEventListener('click', () => { playClick(); showScreen('main-menu'); });
 
 // Back buttons for all tracker screens
 document.querySelectorAll('.back-to-kaelte').forEach(btn => {
@@ -300,11 +301,78 @@ document.getElementById('rounds-done-btn').addEventListener('click', () => {
     showView('tracker-rounds', 'rounds-setup');
 });
 
+// ===== MEDITATION TRACKER =====
+
+document.getElementById('meditation-btn').addEventListener('click', () => {
+    playClick();
+    showScreen('tracker-meditation');
+    showView('tracker-meditation', 'meditation-setup');
+});
+
+document.getElementById('back-to-geist').addEventListener('click', () => {
+    playClick();
+    stopMeditation();
+    showScreen('geist-menu');
+});
+
+const medProgress = document.querySelector('.med-progress');
+medProgress.style.strokeDasharray = CIRC;
+
+let medInterval = null;
+let medRemaining = 0;
+let medTotal = 0;
+
+document.getElementById('med-dur').addEventListener('input', () => {
+    const v = parseInt(document.getElementById('med-dur').value);
+    document.getElementById('med-dur-val').textContent = formatTime(v);
+});
+
+document.getElementById('med-start').addEventListener('click', () => {
+    playClick();
+    medTotal = parseInt(document.getElementById('med-dur').value);
+    medRemaining = medTotal;
+    document.getElementById('med-display').textContent = formatTime(medRemaining);
+    document.getElementById('med-phase').textContent = 'MEDITATION';
+    medProgress.style.stroke = '#c8a050';
+    medProgress.style.strokeDashoffset = 0;
+    showView('tracker-meditation', 'meditation-timer');
+    medInterval = setInterval(() => {
+        medRemaining--;
+        document.getElementById('med-display').textContent = formatTime(medRemaining);
+        const offset = CIRC * (1 - medRemaining / medTotal);
+        medProgress.style.strokeDashoffset = offset;
+        if (medRemaining <= 0) {
+            clearInterval(medInterval);
+            medInterval = null;
+            playGong();
+            if (navigator.vibrate) navigator.vibrate([500, 200, 500]);
+            document.getElementById('med-stat-dur').textContent = formatTime(medTotal);
+            showView('tracker-meditation', 'meditation-done');
+        }
+    }, 1000);
+});
+
+document.getElementById('med-stop').addEventListener('click', () => {
+    playClick();
+    stopMeditation();
+    showView('tracker-meditation', 'meditation-setup');
+});
+
+document.getElementById('med-done').addEventListener('click', () => {
+    playClick();
+    showView('tracker-meditation', 'meditation-setup');
+});
+
+function stopMeditation() {
+    if (medInterval) { clearInterval(medInterval); medInterval = null; }
+}
+
 // ===== STOP ALL TIMERS =====
 
 function stopAllTimers() {
     eisduscheTracker.stop();
     eisbadenTracker.stop();
+    stopMeditation();
     if (roundsInterval) { clearInterval(roundsInterval); roundsInterval = null; }
 }
 

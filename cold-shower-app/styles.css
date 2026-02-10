@@ -399,6 +399,16 @@ html, body {
     box-shadow: 0 0 10px rgba(0, 191, 255, 0.5);
 }
 
+.med-slider {
+    background: linear-gradient(90deg, #8b6914, #c8a050);
+}
+
+.med-slider::-webkit-slider-thumb {
+    background: #f0e0c0;
+    border-color: #c8a050;
+    box-shadow: 0 0 10px rgba(200, 160, 80, 0.5);
+}
+
 /* ===== BUTTONS ===== */
 
 .start-btn {
