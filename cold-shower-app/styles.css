@@ -416,11 +416,54 @@ html, body {
     max-width: 340px;
 }
 
+.music-toggle-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.music-toggle {
+    position: relative;
+    width: 52px;
+    height: 28px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 14px;
+    cursor: pointer;
+    transition: background 0.3s, border-color 0.3s;
+    padding: 0;
+}
+
+.music-toggle.active {
+    background: rgba(200, 160, 80, 0.35);
+    border-color: rgba(200, 160, 80, 0.6);
+}
+
+.toggle-knob {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 20px;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    transition: transform 0.3s, background 0.3s;
+}
+
+.music-toggle.active .toggle-knob {
+    transform: translateX(24px);
+    background: #c8a050;
+}
+
 .music-options {
     display: flex;
     flex-direction: column;
     gap: 6px;
-    margin-top: 8px;
+}
+
+.music-options.hidden {
+    display: none;
 }
 
 .music-option {

@@ -322,17 +322,33 @@ let medInterval = null;
 let medRemaining = 0;
 let medTotal = 0;
 let medMusic = null;
+let musicEnabled = false;
 let selectedMusicSrc = '';
 
-// Music selection
+// Music toggle
+const musicToggle = document.getElementById('med-music-toggle');
+const musicOptions = document.getElementById('med-music-options');
+
+musicToggle.addEventListener('click', () => {
+    playClick();
+    musicEnabled = !musicEnabled;
+    musicToggle.classList.toggle('active', musicEnabled);
+    musicOptions.classList.toggle('hidden', !musicEnabled);
+    if (!musicEnabled) {
+        selectedMusicSrc = '';
+    } else {
+        const sel = musicOptions.querySelector('.music-option.selected');
+        if (sel) selectedMusicSrc = sel.dataset.src;
+    }
+});
+
+// Music song selection
 document.querySelectorAll('.music-option').forEach(opt => {
     opt.addEventListener('click', () => {
         playClick();
         document.querySelectorAll('.music-option').forEach(o => o.classList.remove('selected'));
         opt.classList.add('selected');
         selectedMusicSrc = opt.dataset.src;
-        document.getElementById('med-music-status').textContent =
-            selectedMusicSrc ? opt.querySelector('.music-option-name').textContent : 'Aus';
     });
 });
 
@@ -350,8 +366,8 @@ document.getElementById('med-start').addEventListener('click', () => {
     medProgress.style.stroke = '#c8a050';
     medProgress.style.strokeDashoffset = 0;
     showView('tracker-meditation', 'meditation-timer');
-    // Start music if selected
-    if (selectedMusicSrc) {
+    // Start music if enabled and selected
+    if (musicEnabled && selectedMusicSrc) {
         medMusic = new Audio(selectedMusicSrc);
         medMusic.loop = true;
         medMusic.play().catch(() => {});
