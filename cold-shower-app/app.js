@@ -420,12 +420,177 @@ function stopMeditation() {
     if (medMusic) { medMusic.pause(); medMusic = null; }
 }
 
+// ===== MEDITATIONS-ATMUNG (Wim Hof) =====
+
+document.getElementById('atemmeditation-btn').addEventListener('click', () => {
+    playClick();
+    showScreen('tracker-atmung');
+    showView('tracker-atmung', 'atmung-setup');
+});
+
+document.getElementById('back-to-geist-atmung').addEventListener('click', () => {
+    playClick();
+    stopAtmung();
+    showScreen('geist-menu');
+});
+
+let atmInterval = null;
+let atmMusic = null;
+let atmMusicEnabled = false;
+let atmSelectedSrc = '';
+let atmRetentionSeconds = 0;
+
+// Music toggle for Atmung
+const atmToggle = document.getElementById('atm-music-toggle');
+const atmOptions = document.getElementById('atm-music-options');
+
+atmToggle.addEventListener('click', () => {
+    playClick();
+    atmMusicEnabled = !atmMusicEnabled;
+    atmToggle.classList.toggle('active', atmMusicEnabled);
+    atmOptions.classList.toggle('hidden', !atmMusicEnabled);
+    if (!atmMusicEnabled) {
+        atmSelectedSrc = '';
+    } else {
+        const sel = atmOptions.querySelector('.music-option.selected');
+        if (sel) atmSelectedSrc = sel.dataset.src;
+    }
+});
+
+atmOptions.querySelectorAll('.music-option').forEach(opt => {
+    opt.addEventListener('click', () => {
+        playClick();
+        atmOptions.querySelectorAll('.music-option').forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+        atmSelectedSrc = opt.dataset.src;
+    });
+});
+
+document.getElementById('atm-start').addEventListener('click', () => {
+    playClick();
+    // Start music
+    if (atmMusicEnabled && atmSelectedSrc) {
+        atmMusic = new Audio(atmSelectedSrc);
+        atmMusic.loop = true;
+        atmMusic.play().catch(() => {});
+    }
+    showView('tracker-atmung', 'atmung-breathing');
+    startBreathingPhase();
+});
+
+// --- Breathing Phase: 30 breaths, Wim Hof rhythm ---
+// ~1.7s inhale, ~1.7s exhale = ~3.4s per cycle
+
+function startBreathingPhase() {
+    const img = document.getElementById('atm-breath-img');
+    const phase = document.getElementById('atm-phase');
+    const count = document.getElementById('atm-count');
+    const instruction = document.getElementById('atm-instruction');
+    let breath = 0;
+    const totalBreaths = 30;
+    const inhaleMs = 1700;
+    const exhaleMs = 1700;
+
+    function doInhale() {
+        breath++;
+        if (breath > totalBreaths) {
+            startRetentionPhase();
+            return;
+        }
+        count.textContent = `${breath} / ${totalBreaths}`;
+        phase.textContent = 'EINATMEN';
+        instruction.textContent = 'Atme tief ein...';
+        img.classList.remove('atm-exhale');
+        img.classList.add('atm-inhale');
+        if (navigator.vibrate) navigator.vibrate(50);
+        atmInterval = setTimeout(doExhale, inhaleMs);
+    }
+
+    function doExhale() {
+        phase.textContent = 'AUSATMEN';
+        instruction.textContent = 'Langsam ausatmen...';
+        img.classList.remove('atm-inhale');
+        img.classList.add('atm-exhale');
+        atmInterval = setTimeout(doInhale, exhaleMs);
+    }
+
+    doInhale();
+}
+
+// --- Retention Phase ---
+
+function startRetentionPhase() {
+    showView('tracker-atmung', 'atmung-retention');
+    atmRetentionSeconds = 0;
+    document.getElementById('atm-retention-display').textContent = '0:00';
+    atmInterval = setInterval(() => {
+        atmRetentionSeconds++;
+        document.getElementById('atm-retention-display').textContent = formatTime(atmRetentionSeconds);
+    }, 1000);
+}
+
+document.getElementById('atm-breathe-in').addEventListener('click', () => {
+    playClick();
+    if (atmInterval) { clearInterval(atmInterval); atmInterval = null; }
+    startRecoveryPhase();
+});
+
+// --- Recovery Breath: inhale and hold 15s ---
+
+function startRecoveryPhase() {
+    showView('tracker-atmung', 'atmung-recovery');
+    let remaining = 15;
+    document.getElementById('atm-recovery-display').textContent = '0:15';
+    if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+    atmInterval = setInterval(() => {
+        remaining--;
+        document.getElementById('atm-recovery-display').textContent = formatTime(remaining);
+        if (remaining <= 0) {
+            clearInterval(atmInterval);
+            atmInterval = null;
+            finishAtmung();
+        }
+    }, 1000);
+}
+
+function finishAtmung() {
+    // Fade out music
+    if (atmMusic) {
+        let vol = atmMusic.volume;
+        const fade = setInterval(() => {
+            vol -= 0.1;
+            if (vol <= 0) {
+                clearInterval(fade);
+                atmMusic.pause();
+                atmMusic = null;
+            } else {
+                atmMusic.volume = vol;
+            }
+        }, 150);
+    }
+    playGong();
+    if (navigator.vibrate) navigator.vibrate([500, 200, 500]);
+    document.getElementById('atm-stat-retention').textContent = formatTime(atmRetentionSeconds);
+    showView('tracker-atmung', 'atmung-done');
+}
+
+document.getElementById('atm-done').addEventListener('click', () => {
+    playClick();
+    showView('tracker-atmung', 'atmung-setup');
+});
+
+function stopAtmung() {
+    if (atmInterval) { clearTimeout(atmInterval); clearInterval(atmInterval); atmInterval = null; }
+    if (atmMusic) { atmMusic.pause(); atmMusic = null; }
+}
+
 // ===== STOP ALL TIMERS =====
 
 function stopAllTimers() {
     eisduscheTracker.stop();
     eisbadenTracker.stop();
     stopMeditation();
+    stopAtmung();
     if (roundsInterval) { clearInterval(roundsInterval); roundsInterval = null; }
 }
 

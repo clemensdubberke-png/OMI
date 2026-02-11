@@ -56,13 +56,97 @@
         <div class="vignette"></div>
         <button class="back-btn" id="back-to-main-geist">&larr;</button>
         <div class="kaelte-menu-grid">
-            <div class="kaelte-row kaelte-row-center">
+            <div class="kaelte-row">
                 <div class="kaelte-item" id="meditation-btn">
                     <div class="glow-ring glow-bronze"></div>
                     <img src="meditation.jpg" alt="Meditation" class="kaelte-item-img">
                     <span class="kaelte-item-label">MEDITATION</span>
                 </div>
+                <div class="kaelte-item" id="atemmeditation-btn">
+                    <div class="glow-ring glow-bronze"></div>
+                    <img src="meditations-atmung.jpg" alt="Meditations-Atmung" class="kaelte-item-img">
+                    <span class="kaelte-item-label">ATMUNG</span>
+                </div>
             </div>
+        </div>
+    </div>
+
+    <!-- ===== MEDITATIONS-ATMUNG TRACKER ===== -->
+    <div id="tracker-atmung" class="screen">
+        <div class="fog-wrapper">
+            <div class="fog fog-1"></div>
+            <div class="fog fog-2"></div>
+            <div class="fog fog-3"></div>
+        </div>
+        <canvas class="particles-canvas"></canvas>
+        <div class="vignette"></div>
+        <button class="back-btn" id="back-to-geist-atmung">&larr;</button>
+        <!-- Setup -->
+        <div id="atmung-setup" class="tracker-view">
+            <h1 class="tracker-title">MEDITATIONS-ATMUNG</h1>
+            <img src="meditations-atmung.jpg" alt="Meditations-Atmung" class="tracker-icon">
+            <div class="music-selector">
+                <div class="music-toggle-row">
+                    <span class="label-text">Musik</span>
+                    <button class="music-toggle" id="atm-music-toggle">
+                        <span class="toggle-knob"></span>
+                    </button>
+                </div>
+                <div class="music-options hidden" id="atm-music-options">
+                    <div class="music-option selected" data-src="Gleichbleibender Strom.mp3">
+                        <span class="music-option-name">Gleichbleibender Strom</span>
+                    </div>
+                    <div class="music-option" data-src="Floating Breath.mp3">
+                        <span class="music-option-name">Floating Breath</span>
+                    </div>
+                    <div class="music-option" data-src="Silent River Breath.mp3">
+                        <span class="music-option-name">Silent River Breath</span>
+                    </div>
+                    <div class="music-option" data-src="Silent River Mind.mp3">
+                        <span class="music-option-name">Silent River Mind</span>
+                    </div>
+                </div>
+            </div>
+            <button class="start-btn" id="atm-start">START</button>
+        </div>
+        <!-- Breathing Phase (30 breaths) -->
+        <div id="atmung-breathing" class="tracker-view hidden">
+            <div class="timer-phase" id="atm-phase">EINATMEN</div>
+            <div class="atm-breath-count" id="atm-count">1 / 30</div>
+            <div class="atm-image-container">
+                <img src="meditations-atmung.jpg" alt="" class="atm-breath-img" id="atm-breath-img">
+            </div>
+            <div class="atm-instruction" id="atm-instruction">Atme tief ein...</div>
+        </div>
+        <!-- Retention Phase -->
+        <div id="atmung-retention" class="tracker-view hidden">
+            <div class="timer-phase">ATEM ANHALTEN</div>
+            <div class="timer-display" id="atm-retention-display">0:00</div>
+            <div class="atm-image-container">
+                <img src="meditations-atmung.jpg" alt="" class="atm-breath-img atm-small">
+            </div>
+            <div class="atm-instruction">Halte den Atem an. Lass dich in den parasympathischen Zustand gleiten.</div>
+            <button class="start-btn" id="atm-breathe-in">EINATMEN</button>
+        </div>
+        <!-- Recovery Breath -->
+        <div id="atmung-recovery" class="tracker-view hidden">
+            <div class="timer-phase">RECOVERY BREATH</div>
+            <div class="timer-display" id="atm-recovery-display">0:15</div>
+            <div class="atm-image-container">
+                <img src="meditations-atmung.jpg" alt="" class="atm-breath-img atm-large">
+            </div>
+            <div class="atm-instruction">Tief einatmen und halten.</div>
+        </div>
+        <!-- Done -->
+        <div id="atmung-done" class="tracker-view hidden">
+            <div class="done-icon">&#10003;</div>
+            <h2 class="done-title">NAMASTE</h2>
+            <div class="done-stats">
+                <div class="stat"><span class="stat-label">Atemzüge</span><span class="stat-value" id="atm-stat-breaths">30</span></div>
+                <div class="stat"><span class="stat-label">Retention</span><span class="stat-value" id="atm-stat-retention"></span></div>
+            </div>
+            <div class="atm-instruction" style="margin-top:10px;">Fühle dich geistig erfrischt und zurückgesetzt.</div>
+            <button class="start-btn" id="atm-done">ZURÜCK</button>
         </div>
     </div>
 
