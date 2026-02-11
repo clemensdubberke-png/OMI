@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cold-shower-v11';
+const CACHE_NAME = 'cold-shower-v12';
 const ASSETS = [
     './',
     './index.html',
@@ -17,6 +17,9 @@ const ASSETS = [
     './Klick.mp3',
     './Gong.mp3',
     './Gleichbleibender Strom.mp3',
+    './Floating Breath.mp3',
+    './Silent River Breath.mp3',
+    './Silent River Mind.mp3',
     './Tiefer als die Welle.mp3',
     './Nebel über meinem Kopf Version 1.mp3',
     './Atem wie ein leiser Fluss.mp3',
