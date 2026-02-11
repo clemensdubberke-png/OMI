@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cold-shower-v16';
+const CACHE_NAME = 'cold-shower-v17';
 const ASSETS = [
     './',
     './index.html',
@@ -17,6 +17,8 @@ const ASSETS = [
     './meditations-atmung.jpg',
     './Klick.mp3',
     './Gong.mp3',
+    './Einatmung.mp3',
+    './Ausatmung.mp3',
     './Gleichbleibender Strom.mp3',
     './Floating Breath.mp3',
     './Silent River Breath.mp3',

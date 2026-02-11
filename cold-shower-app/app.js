@@ -439,6 +439,11 @@ let atmMusic = null;
 let atmMusicEnabled = false;
 let atmSelectedSrc = '';
 let atmRetentionSeconds = 0;
+let atmBreathSoundEnabled = false;
+const inhaleSound = new Audio('Einatmung.mp3');
+const exhaleSound = new Audio('Ausatmung.mp3');
+inhaleSound.preload = 'auto';
+exhaleSound.preload = 'auto';
 
 // Music toggle for Atmung
 const atmToggle = document.getElementById('atm-music-toggle');
@@ -455,6 +460,14 @@ atmToggle.addEventListener('click', () => {
         const sel = atmOptions.querySelector('.music-option.selected');
         if (sel) atmSelectedSrc = sel.dataset.src;
     }
+});
+
+// Breath sounds toggle
+const breathSoundToggle = document.getElementById('atm-breath-sound-toggle');
+breathSoundToggle.addEventListener('click', () => {
+    playClick();
+    atmBreathSoundEnabled = !atmBreathSoundEnabled;
+    breathSoundToggle.classList.toggle('active', atmBreathSoundEnabled);
 });
 
 atmOptions.querySelectorAll('.music-option').forEach(opt => {
@@ -502,6 +515,7 @@ function startBreathingPhase() {
         instruction.textContent = 'Atme tief ein...';
         img.classList.remove('atm-exhale');
         img.classList.add('atm-inhale');
+        if (atmBreathSoundEnabled) { inhaleSound.currentTime = 0; inhaleSound.play().catch(() => {}); }
         if (navigator.vibrate) navigator.vibrate(50);
         atmInterval = setTimeout(doExhale, inhaleMs);
     }
@@ -511,6 +525,7 @@ function startBreathingPhase() {
         instruction.textContent = 'Langsam ausatmen...';
         img.classList.remove('atm-inhale');
         img.classList.add('atm-exhale');
+        if (atmBreathSoundEnabled) { exhaleSound.currentTime = 0; exhaleSound.play().catch(() => {}); }
         atmInterval = setTimeout(doInhale, exhaleMs);
     }
 
