@@ -554,6 +554,71 @@ html, body {
     letter-spacing: 0.5px;
 }
 
+/* ===== SAFETY BOX ===== */
+
+.safety-box {
+    width: 100%;
+    max-width: 340px;
+    background: rgba(200, 80, 60, 0.08);
+    border: 1px solid rgba(200, 80, 60, 0.3);
+    border-radius: 12px;
+    padding: 16px;
+}
+
+.safety-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: rgba(255, 180, 160, 0.9);
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+}
+
+.safety-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.safety-list li {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.55);
+    line-height: 1.5;
+}
+
+.safety-list li strong {
+    color: rgba(255, 200, 180, 0.8);
+}
+
+/* ===== PUSHUP COUNTER ===== */
+
+.lg-pushup-count {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.lg-pushup-count #lg-pushup-num {
+    font-size: 100px;
+    font-weight: 200;
+    color: #c8a050;
+    line-height: 1;
+}
+
+.lg-pushup-label {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.4);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.lg-tap-btn {
+    background: linear-gradient(135deg, #6b4c1a, #c8a050) !important;
+    font-size: 16px !important;
+}
+
 /* ===== BUTTONS ===== */
 
 .start-btn {

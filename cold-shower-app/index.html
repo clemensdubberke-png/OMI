@@ -68,6 +68,13 @@
                     <span class="kaelte-item-label">KURZE ATEMMEDITATION</span>
                 </div>
             </div>
+            <div class="kaelte-row kaelte-row-center">
+                <div class="kaelte-item" id="liegestuetze-btn">
+                    <div class="glow-ring glow-bronze"></div>
+                    <img src="liegestuetze.jpg" alt="Liegestütze" class="kaelte-item-img">
+                    <span class="kaelte-item-label">LIEGESTÜTZE</span>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -155,6 +162,72 @@
             </div>
             <div class="atm-instruction" style="margin-top:10px;">Fühle dich geistig erfrischt und zurückgesetzt.</div>
             <button class="start-btn" id="atm-done">ZURÜCK</button>
+        </div>
+    </div>
+
+    <!-- ===== LIEGESTÜTZE TRACKER ===== -->
+    <div id="tracker-liegestuetze" class="screen">
+        <div class="fog-wrapper">
+            <div class="fog fog-1"></div>
+            <div class="fog fog-2"></div>
+            <div class="fog fog-3"></div>
+        </div>
+        <canvas class="particles-canvas"></canvas>
+        <div class="vignette"></div>
+        <button class="back-btn" id="back-to-geist-lg">&larr;</button>
+        <!-- Safety Info -->
+        <div id="lg-safety" class="tracker-view">
+            <h1 class="tracker-title">LIEGESTÜTZE</h1>
+            <img src="liegestuetze.jpg" alt="Liegestütze" class="tracker-icon">
+            <div class="safety-box">
+                <div class="safety-title">Sicherheitshinweise</div>
+                <ul class="safety-list">
+                    <li><strong>Sichere Umgebung:</strong> Niemals im oder am Wasser, im Stehen oder in Situationen, in denen eine Ohnmacht tödlich enden könnte.</li>
+                    <li><strong>Unterlage:</strong> Trainiere auf einer weichen Matte, damit du dich bei einem Sturz nicht verletzt.</li>
+                    <li><strong>Kein falscher Ehrgeiz:</strong> Bei Kribbeln, Schwindel oder starkem Pochen sofort abbrechen und normal atmen.</li>
+                    <li><strong>Gesundheits-Check:</strong> Bei Bluthochdruck, Epilepsie, Herzproblemen oder Schwangerschaft ist diese Technik absolut tabu.</li>
+                </ul>
+            </div>
+            <div class="music-selector">
+                <div class="music-toggle-row">
+                    <span class="label-text">Atemgeräusche</span>
+                    <button class="music-toggle" id="lg-breath-sound-toggle">
+                        <span class="toggle-knob"></span>
+                    </button>
+                </div>
+            </div>
+            <button class="start-btn" id="lg-start">VERSTANDEN – START</button>
+        </div>
+        <!-- Breathing Phase (30-40 breaths) -->
+        <div id="lg-breathing" class="tracker-view hidden">
+            <div class="timer-phase" id="lg-phase">EINATMEN</div>
+            <div class="atm-breath-count" id="lg-count">1 / 35</div>
+            <div class="atm-image-container">
+                <img src="liegestuetze.jpg" alt="" class="atm-breath-img" id="lg-breath-img">
+            </div>
+            <div class="atm-instruction" id="lg-instruction">Atme tief ein...</div>
+        </div>
+        <!-- Retention + Pushups -->
+        <div id="lg-pushups" class="tracker-view hidden">
+            <div class="timer-phase">ATEM ANHALTEN – LIEGESTÜTZE!</div>
+            <div class="timer-display" id="lg-retention-display">0:00</div>
+            <div class="lg-pushup-count">
+                <span id="lg-pushup-num">0</span>
+                <span class="lg-pushup-label">Liegestütze</span>
+            </div>
+            <button class="start-btn lg-tap-btn" id="lg-tap">LIEGESTÜTZE ZÄHLEN</button>
+            <button class="finish-btn" id="lg-finish">FERTIG</button>
+        </div>
+        <!-- Done -->
+        <div id="lg-done" class="tracker-view hidden">
+            <div class="done-icon">&#10003;</div>
+            <h2 class="done-title">GESCHAFFT!</h2>
+            <div class="done-stats">
+                <div class="stat"><span class="stat-label">Atemzüge</span><span class="stat-value" id="lg-stat-breaths">35</span></div>
+                <div class="stat"><span class="stat-label">Liegestütze</span><span class="stat-value" id="lg-stat-pushups"></span></div>
+                <div class="stat"><span class="stat-label">Retention</span><span class="stat-value" id="lg-stat-retention"></span></div>
+            </div>
+            <button class="start-btn" id="lg-done-btn">ZURÜCK</button>
         </div>
     </div>
 

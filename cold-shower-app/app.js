@@ -599,6 +599,115 @@ function stopAtmung() {
     if (atmMusic) { atmMusic.pause(); atmMusic = null; }
 }
 
+// ===== LIEGESTÜTZE (Wim Hof Pushups) =====
+
+document.getElementById('liegestuetze-btn').addEventListener('click', () => {
+    playClick();
+    showScreen('tracker-liegestuetze');
+    showView('tracker-liegestuetze', 'lg-safety');
+});
+
+document.getElementById('back-to-geist-lg').addEventListener('click', () => {
+    playClick();
+    stopLiegestuetze();
+    showScreen('geist-menu');
+});
+
+let lgInterval = null;
+let lgRetentionSeconds = 0;
+let lgPushupCount = 0;
+let lgBreathSoundEnabled = false;
+const lgTotalBreaths = 35;
+
+const lgBreathToggle = document.getElementById('lg-breath-sound-toggle');
+lgBreathToggle.addEventListener('click', () => {
+    playClick();
+    lgBreathSoundEnabled = !lgBreathSoundEnabled;
+    lgBreathToggle.classList.toggle('active', lgBreathSoundEnabled);
+});
+
+document.getElementById('lg-start').addEventListener('click', () => {
+    playClick();
+    showView('tracker-liegestuetze', 'lg-breathing');
+    startLgBreathing();
+});
+
+function startLgBreathing() {
+    const img = document.getElementById('lg-breath-img');
+    const phase = document.getElementById('lg-phase');
+    const count = document.getElementById('lg-count');
+    const instruction = document.getElementById('lg-instruction');
+    let breath = 0;
+    const inhaleMs = 3000;
+    const exhaleMs = 1700;
+
+    function doInhale() {
+        breath++;
+        if (breath > lgTotalBreaths) {
+            startLgPushups();
+            return;
+        }
+        count.textContent = `${breath} / ${lgTotalBreaths}`;
+        phase.textContent = 'EINATMEN';
+        instruction.textContent = 'Atme tief ein...';
+        img.classList.remove('atm-exhale');
+        img.classList.add('atm-inhale');
+        if (lgBreathSoundEnabled) { inhaleSound.currentTime = 0; inhaleSound.play().catch(() => {}); }
+        if (navigator.vibrate) navigator.vibrate(50);
+        lgInterval = setTimeout(doExhale, inhaleMs);
+    }
+
+    function doExhale() {
+        phase.textContent = 'AUSATMEN';
+        instruction.textContent = 'Loslassen...';
+        img.classList.remove('atm-inhale');
+        img.classList.add('atm-exhale');
+        if (lgBreathSoundEnabled) { exhaleSound.currentTime = 0; exhaleSound.play().catch(() => {}); }
+        lgInterval = setTimeout(doInhale, exhaleMs);
+    }
+
+    doInhale();
+}
+
+function startLgPushups() {
+    showView('tracker-liegestuetze', 'lg-pushups');
+    lgRetentionSeconds = 0;
+    lgPushupCount = 0;
+    document.getElementById('lg-retention-display').textContent = '0:00';
+    document.getElementById('lg-pushup-num').textContent = '0';
+    if (navigator.vibrate) navigator.vibrate([300, 100, 300]);
+    lgInterval = setInterval(() => {
+        lgRetentionSeconds++;
+        document.getElementById('lg-retention-display').textContent = formatTime(lgRetentionSeconds);
+    }, 1000);
+}
+
+document.getElementById('lg-tap').addEventListener('click', () => {
+    lgPushupCount++;
+    document.getElementById('lg-pushup-num').textContent = lgPushupCount;
+    if (navigator.vibrate) navigator.vibrate(30);
+});
+
+document.getElementById('lg-finish').addEventListener('click', () => {
+    playClick();
+    if (lgInterval) { clearInterval(lgInterval); lgInterval = null; }
+    playGong();
+    if (navigator.vibrate) navigator.vibrate([500, 200, 500]);
+    document.getElementById('lg-stat-breaths').textContent = lgTotalBreaths;
+    document.getElementById('lg-stat-pushups').textContent = lgPushupCount;
+    document.getElementById('lg-stat-retention').textContent = formatTime(lgRetentionSeconds);
+    showView('tracker-liegestuetze', 'lg-done');
+});
+
+document.getElementById('lg-done-btn').addEventListener('click', () => {
+    playClick();
+    showView('tracker-liegestuetze', 'lg-safety');
+});
+
+function stopLiegestuetze() {
+    if (lgInterval) { clearTimeout(lgInterval); clearInterval(lgInterval); lgInterval = null; }
+}
+
 // ===== STOP ALL TIMERS =====
 
 function stopAllTimers() {
@@ -606,6 +715,7 @@ function stopAllTimers() {
     eisbadenTracker.stop();
     stopMeditation();
     stopAtmung();
+    stopLiegestuetze();
     if (roundsInterval) { clearInterval(roundsInterval); roundsInterval = null; }
 }
 
