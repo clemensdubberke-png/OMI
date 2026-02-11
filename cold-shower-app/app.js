@@ -488,7 +488,7 @@ function startBreathingPhase() {
     const instruction = document.getElementById('atm-instruction');
     let breath = 0;
     const totalBreaths = 30;
-    const inhaleMs = 1700;
+    const inhaleMs = 3000;
     const exhaleMs = 1700;
 
     function doInhale() {
