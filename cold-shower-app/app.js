@@ -671,12 +671,54 @@ let lgPushupCount = 0;
 let lgBreathSoundEnabled = false;
 const lgTotalBreaths = 35;
 
+let lgVoiceEnabled = false;
+
 const lgBreathToggle = document.getElementById('lg-breath-sound-toggle');
 lgBreathToggle.addEventListener('click', () => {
     playClick();
     lgBreathSoundEnabled = !lgBreathSoundEnabled;
     lgBreathToggle.classList.toggle('active', lgBreathSoundEnabled);
 });
+
+const lgVoiceToggle = document.getElementById('lg-voice-toggle');
+lgVoiceToggle.addEventListener('click', () => {
+    playClick();
+    lgVoiceEnabled = !lgVoiceEnabled;
+    lgVoiceToggle.classList.toggle('active', lgVoiceEnabled);
+});
+
+function playLgVoice(audio) {
+    if (!lgVoiceEnabled) return;
+    audio.currentTime = 0;
+    audio.play().catch(() => {});
+}
+
+// Voice schedule for Liegestütze (35 breaths)
+const lgVoiceSchedule = {
+    1:  { inhale: voiceAtmeEin,  exhale: voiceAusatmen },
+    2:  { inhale: voiceEinatmen, exhale: voiceAusatmen },
+    // 3-5: silence
+    6:  { inhale: voiceEin, exhale: voiceAus },
+    7:  { inhale: voiceEin, exhale: voiceAus },
+    8:  { inhale: voiceEin, exhale: voiceAus },
+    9:  { inhale: voiceEin, exhale: voiceAus },
+    10: { inhale: voiceEin, exhale: voiceAus },
+    // 11-13: silence
+    14: { inhale: voiceEinatmen, exhale: voiceUndAus },
+    15: { inhale: voiceEin,     exhale: voiceUndAus },
+    16: { inhale: voiceEin,     exhale: voiceAus },
+    // 17-19: silence
+    20: { inhale: voiceFolge,   exhale: null },
+    // 21-25: silence
+    26: { inhale: voiceAtmeEin, exhale: voiceUndAus },
+    27: { inhale: voiceEin, exhale: voiceAus },
+    28: { inhale: voiceEin, exhale: voiceAus },
+    29: { inhale: voiceEin, exhale: voiceAus },
+    30: { inhale: voiceEin, exhale: voiceAus },
+    // 31-33: silence
+    34: { inhale: voiceEinatmen, exhale: voiceUndAus },
+    35: { inhale: voiceEin,     exhale: voiceAus },
+};
 
 document.getElementById('lg-start').addEventListener('click', () => {
     playClick();
@@ -705,6 +747,8 @@ function startLgBreathing() {
         img.classList.remove('atm-exhale');
         img.classList.add('atm-inhale');
         if (lgBreathSoundEnabled) { inhaleSound.currentTime = 0; inhaleSound.play().catch(() => {}); }
+        const vs = lgVoiceSchedule[breath];
+        if (vs && vs.inhale) playLgVoice(vs.inhale);
         if (navigator.vibrate) navigator.vibrate(50);
         lgInterval = setTimeout(doExhale, inhaleMs);
     }
@@ -715,6 +759,8 @@ function startLgBreathing() {
         img.classList.remove('atm-inhale');
         img.classList.add('atm-exhale');
         if (lgBreathSoundEnabled) { exhaleSound.currentTime = 0; exhaleSound.play().catch(() => {}); }
+        const vs = lgVoiceSchedule[breath];
+        if (vs && vs.exhale) playLgVoice(vs.exhale);
         lgInterval = setTimeout(doInhale, exhaleMs);
     }
 
