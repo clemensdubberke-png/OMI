@@ -470,6 +470,54 @@ breathSoundToggle.addEventListener('click', () => {
     breathSoundToggle.classList.toggle('active', atmBreathSoundEnabled);
 });
 
+// Voice guidance toggle + sounds
+let atmVoiceEnabled = false;
+const voiceToggle = document.getElementById('atm-voice-toggle');
+voiceToggle.addEventListener('click', () => {
+    playClick();
+    atmVoiceEnabled = !atmVoiceEnabled;
+    voiceToggle.classList.toggle('active', atmVoiceEnabled);
+});
+
+const voiceAtmeEin = new Audio('atme ein.mp3');
+const voiceAusatmen = new Audio('ausatmen.mp3');
+const voiceEinatmen = new Audio('Einatmen.mp3');
+const voiceEin = new Audio('ein.mp3');
+const voiceAus = new Audio('aus.mp3');
+const voiceUndAus = new Audio('und aus.mp3');
+const voiceFolge = new Audio('Folge dem Fluss deines atems ohne Widerstand.mp3');
+[voiceAtmeEin, voiceAusatmen, voiceEinatmen, voiceEin, voiceAus, voiceUndAus, voiceFolge].forEach(a => a.preload = 'auto');
+
+function playVoice(audio) {
+    if (!atmVoiceEnabled) return;
+    audio.currentTime = 0;
+    audio.play().catch(() => {});
+}
+
+// Voice schedule: { breathNumber: { inhale: Audio|null, exhale: Audio|null } }
+const voiceSchedule = {
+    1:  { inhale: voiceAtmeEin,  exhale: voiceAusatmen },
+    2:  { inhale: voiceEinatmen, exhale: voiceAusatmen },
+    // 3-5: silence (~10 seconds)
+    6:  { inhale: voiceEin, exhale: voiceAus },
+    7:  { inhale: voiceEin, exhale: voiceAus },
+    8:  { inhale: voiceEin, exhale: voiceAus },
+    9:  { inhale: voiceEin, exhale: voiceAus },
+    10: { inhale: voiceEin, exhale: voiceAus },
+    // 11-13: silence
+    14: { inhale: voiceEinatmen, exhale: voiceUndAus },
+    15: { inhale: voiceEin,     exhale: voiceUndAus },
+    16: { inhale: voiceEin,     exhale: voiceAus },
+    // 17-19: silence
+    20: { inhale: voiceFolge,   exhale: null },
+    // 21-25: silence (meditative)
+    26: { inhale: voiceAtmeEin, exhale: voiceUndAus },
+    27: { inhale: voiceEin, exhale: voiceAus },
+    28: { inhale: voiceEin, exhale: voiceAus },
+    29: { inhale: voiceEin, exhale: voiceAus },
+    30: { inhale: voiceEin, exhale: voiceAus },
+};
+
 atmOptions.querySelectorAll('.music-option').forEach(opt => {
     opt.addEventListener('click', () => {
         playClick();
@@ -516,6 +564,8 @@ function startBreathingPhase() {
         img.classList.remove('atm-exhale');
         img.classList.add('atm-inhale');
         if (atmBreathSoundEnabled) { inhaleSound.currentTime = 0; inhaleSound.play().catch(() => {}); }
+        const vs = voiceSchedule[breath];
+        if (vs && vs.inhale) playVoice(vs.inhale);
         if (navigator.vibrate) navigator.vibrate(50);
         atmInterval = setTimeout(doExhale, inhaleMs);
     }
@@ -526,6 +576,8 @@ function startBreathingPhase() {
         img.classList.remove('atm-inhale');
         img.classList.add('atm-exhale');
         if (atmBreathSoundEnabled) { exhaleSound.currentTime = 0; exhaleSound.play().catch(() => {}); }
+        const vs = voiceSchedule[breath];
+        if (vs && vs.exhale) playVoice(vs.exhale);
         atmInterval = setTimeout(doInhale, exhaleMs);
     }
 
