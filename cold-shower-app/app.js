@@ -917,6 +917,7 @@ let whVoiceEnabled = false;
 let whRetentionGuideEnabled = false;
 let whRetentionVoiceInterval = null;
 let whRecoveryDuration = 15;
+let whPauseDuration = 3;
 
 const whSpeeds = {
     slow:   { inhale: 4000, exhale: 2500 },
@@ -949,6 +950,12 @@ document.getElementById('wh-breaths').addEventListener('input', () => {
 document.getElementById('wh-recovery-dur').addEventListener('input', () => {
     const v = parseInt(document.getElementById('wh-recovery-dur').value);
     document.getElementById('wh-recovery-val').textContent = formatTime(v);
+});
+
+// Pause between rounds slider
+document.getElementById('wh-pause-dur').addEventListener('input', () => {
+    const v = parseInt(document.getElementById('wh-pause-dur').value);
+    document.getElementById('wh-pause-val').textContent = `${v}s`;
 });
 
 // Music toggle
@@ -1033,6 +1040,7 @@ document.getElementById('wh-start').addEventListener('click', () => {
     whTotalRounds = parseInt(document.getElementById('wh-rounds').value);
     whBreathsPerRound = parseInt(document.getElementById('wh-breaths').value);
     whRecoveryDuration = parseInt(document.getElementById('wh-recovery-dur').value);
+    whPauseDuration = parseInt(document.getElementById('wh-pause-dur').value);
     whCurrentRound = 0;
     whRoundRetentions = [];
     // Start music
@@ -1207,20 +1215,33 @@ function finishWhRound() {
     if (navigator.vibrate) navigator.vibrate([500, 200, 500]);
 
     if (whCurrentRound >= whTotalRounds) {
-        // All rounds done
         finishWhAll();
     } else {
-        // Show round complete screen
+        // Show round complete, then auto-advance
         document.getElementById('wh-round-done-title').textContent = `RUNDE ${whCurrentRound} GESCHAFFT`;
         document.getElementById('wh-round-retention').textContent = formatTime(whRetentionSeconds);
         showView('tracker-wimhof', 'wh-round-done');
+
+        if (whPauseDuration === 0) {
+            // Immediate
+            document.getElementById('wh-next-countdown').textContent = '';
+            startWhNextRound();
+        } else {
+            let countdown = whPauseDuration;
+            document.getElementById('wh-next-countdown').textContent = `Nächste Runde in ${countdown}...`;
+            whInterval = setInterval(() => {
+                countdown--;
+                if (countdown <= 0) {
+                    clearInterval(whInterval);
+                    whInterval = null;
+                    startWhNextRound();
+                } else {
+                    document.getElementById('wh-next-countdown').textContent = `Nächste Runde in ${countdown}...`;
+                }
+            }, 1000);
+        }
     }
 }
-
-document.getElementById('wh-next-round').addEventListener('click', () => {
-    playClick();
-    startWhNextRound();
-});
 
 function finishWhAll() {
     // Fade out music

@@ -386,6 +386,13 @@
                 </label>
                 <input type="range" id="wh-recovery-dur" class="slider med-slider" min="15" max="60" value="15" step="5">
             </div>
+            <div class="slider-group">
+                <label class="slider-label">
+                    <span class="label-text">Pause zwischen Runden</span>
+                    <span class="label-value" id="wh-pause-val">3s</span>
+                </label>
+                <input type="range" id="wh-pause-dur" class="slider med-slider" min="0" max="10" value="3" step="1">
+            </div>
             <div class="music-selector">
                 <div class="music-toggle-row">
                     <span class="label-text">Musik</span>
@@ -484,7 +491,7 @@
             <div class="done-stats">
                 <div class="stat"><span class="stat-label">Retention</span><span class="stat-value" id="wh-round-retention"></span></div>
             </div>
-            <button class="start-btn" id="wh-next-round">NÄCHSTE RUNDE</button>
+            <div class="atm-instruction" id="wh-next-countdown" style="margin-top:16px;opacity:0.6;">Nächste Runde in 3...</div>
         </div>
         <!-- All Done -->
         <div id="wh-done" class="tracker-view hidden">
