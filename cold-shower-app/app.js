@@ -912,6 +912,9 @@ let whTotalRounds = 3;
 let whRetentionSeconds = 0;
 let whRoundRetentions = [];
 const whBreathsPerRound = 30;
+let whBreathSoundEnabled = false;
+let whVoiceEnabled = false;
+let whRetentionVoiceInterval = null;
 
 const whSpeeds = {
     slow:   { inhale: 4000, exhale: 2500 },
@@ -961,6 +964,48 @@ whMusicOptions.querySelectorAll('.music-option').forEach(opt => {
     });
 });
 
+// Breath sounds toggle
+const whBreathToggle = document.getElementById('wh-breath-sound-toggle');
+whBreathToggle.addEventListener('click', () => {
+    playClick();
+    whBreathSoundEnabled = !whBreathSoundEnabled;
+    whBreathToggle.classList.toggle('active', whBreathSoundEnabled);
+});
+
+// Voice toggle
+const whVoiceToggle = document.getElementById('wh-voice-toggle');
+whVoiceToggle.addEventListener('click', () => {
+    playClick();
+    whVoiceEnabled = !whVoiceEnabled;
+    whVoiceToggle.classList.toggle('active', whVoiceEnabled);
+});
+
+function playWhVoice(audio) {
+    if (!whVoiceEnabled) return;
+    audio.currentTime = 0;
+    audio.play().catch(() => {});
+}
+
+// Voice schedule for Wim Hof (same as Atemmeditation, 30 breaths)
+const whVoiceSchedule = {
+    1:  { inhale: voiceAtmeEin,  exhale: voiceAusatmen },
+    2:  { inhale: voiceEinatmen, exhale: voiceAusatmen },
+    6:  { inhale: voiceEin, exhale: voiceAus },
+    7:  { inhale: voiceEin, exhale: voiceAus },
+    8:  { inhale: voiceEin, exhale: voiceAus },
+    9:  { inhale: voiceEin, exhale: voiceAus },
+    10: { inhale: voiceEin, exhale: voiceAus },
+    14: { inhale: voiceEinatmen, exhale: voiceUndAus },
+    15: { inhale: voiceEin,     exhale: voiceUndAus },
+    16: { inhale: voiceEin,     exhale: voiceAus },
+    20: { inhale: voiceFolge,   exhale: null },
+    26: { inhale: voiceAtmeEin, exhale: voiceUndAus },
+    27: { inhale: voiceEin, exhale: voiceAus },
+    28: { inhale: voiceEin, exhale: voiceAus },
+    29: { inhale: voiceEin, exhale: voiceAus },
+    30: { inhale: voiceEin, exhale: voiceAus },
+};
+
 // Start
 document.getElementById('wh-start').addEventListener('click', () => {
     playClick();
@@ -1007,6 +1052,9 @@ function startWhBreathing() {
         instruction.textContent = 'Atme tief ein...';
         img.classList.remove('atm-exhale');
         img.classList.add('atm-inhale');
+        if (whBreathSoundEnabled) { inhaleSound.currentTime = 0; inhaleSound.play().catch(() => {}); }
+        const vs = whVoiceSchedule[breath];
+        if (vs && vs.inhale) playWhVoice(vs.inhale);
         if (navigator.vibrate) navigator.vibrate(50);
         whInterval = setTimeout(doExhale, speed.inhale);
     }
@@ -1016,6 +1064,9 @@ function startWhBreathing() {
         instruction.textContent = 'Langsam ausatmen...';
         img.classList.remove('atm-inhale');
         img.classList.add('atm-exhale');
+        if (whBreathSoundEnabled) { exhaleSound.currentTime = 0; exhaleSound.play().catch(() => {}); }
+        const vs = whVoiceSchedule[breath];
+        if (vs && vs.exhale) playWhVoice(vs.exhale);
         whInterval = setTimeout(doInhale, speed.exhale);
     }
 
@@ -1027,15 +1078,41 @@ function startWhRetention() {
     updateWhRoundInfo('wh-retention-round');
     whRetentionSeconds = 0;
     document.getElementById('wh-retention-display').textContent = '0:00';
+
+    // Play initial retention voice
+    if (whVoiceEnabled) {
+        voiceHalteAtem.currentTime = 0;
+        voiceHalteAtem.play().catch(() => {});
+    }
+
     whInterval = setInterval(() => {
         whRetentionSeconds++;
         document.getElementById('wh-retention-display').textContent = formatTime(whRetentionSeconds);
+
+        // Voice at minute marks
+        if (whVoiceEnabled && retentionMinuteClips[whRetentionSeconds]) {
+            const clip = retentionMinuteClips[whRetentionSeconds];
+            clip.currentTime = 0;
+            clip.play().catch(() => {});
+        }
     }, 1000);
+
+    // Random voice every 30 seconds
+    if (whVoiceEnabled) {
+        whRetentionVoiceInterval = setInterval(() => {
+            if (!retentionMinuteClips[whRetentionSeconds]) {
+                const clip = retentionRandomClips[Math.floor(Math.random() * retentionRandomClips.length)];
+                clip.currentTime = 0;
+                clip.play().catch(() => {});
+            }
+        }, 30000);
+    }
 }
 
 document.getElementById('wh-breathe-in').addEventListener('click', () => {
     playClick();
     if (whInterval) { clearInterval(whInterval); whInterval = null; }
+    if (whRetentionVoiceInterval) { clearInterval(whRetentionVoiceInterval); whRetentionVoiceInterval = null; }
     startWhRecovery();
 });
 
@@ -1109,6 +1186,7 @@ document.getElementById('wh-done-btn').addEventListener('click', () => {
 
 function stopWimhof() {
     if (whInterval) { clearTimeout(whInterval); clearInterval(whInterval); whInterval = null; }
+    if (whRetentionVoiceInterval) { clearInterval(whRetentionVoiceInterval); whRetentionVoiceInterval = null; }
     if (whMusic) { whMusic.pause(); whMusic = null; }
 }
 
