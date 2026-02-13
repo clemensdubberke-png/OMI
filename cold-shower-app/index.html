@@ -379,6 +379,13 @@
                 </label>
                 <input type="range" id="wh-breaths" class="slider med-slider" min="5" max="60" value="30" step="1">
             </div>
+            <div class="slider-group">
+                <label class="slider-label">
+                    <span class="label-text">Recovery Atem halten</span>
+                    <span class="label-value" id="wh-recovery-val">0:15</span>
+                </label>
+                <input type="range" id="wh-recovery-dur" class="slider med-slider" min="15" max="60" value="15" step="5">
+            </div>
             <div class="music-selector">
                 <div class="music-toggle-row">
                     <span class="label-text">Musik</span>
@@ -458,7 +465,7 @@
                 <img src="atem.jpg" alt="" class="atm-breath-img atm-small">
             </div>
             <div class="atm-instruction">Halte den Atem an, so lange du kannst.</div>
-            <button class="start-btn" id="wh-breathe-in">EINATMEN</button>
+            <div class="atm-instruction" style="margin-top:16px;opacity:0.5;font-size:13px;">Doppeltipp zum Beenden</div>
         </div>
         <!-- Recovery Breath -->
         <div id="wh-recovery" class="tracker-view hidden">

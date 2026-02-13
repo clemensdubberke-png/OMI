@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cold-shower-v25';
+const CACHE_NAME = 'cold-shower-v26';
 const ASSETS = [
     './',
     './index.html',

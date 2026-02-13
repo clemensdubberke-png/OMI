@@ -916,6 +916,7 @@ let whBreathSoundEnabled = false;
 let whVoiceEnabled = false;
 let whRetentionGuideEnabled = false;
 let whRetentionVoiceInterval = null;
+let whRecoveryDuration = 15;
 
 const whSpeeds = {
     slow:   { inhale: 4000, exhale: 2500 },
@@ -942,6 +943,12 @@ document.getElementById('wh-rounds').addEventListener('input', () => {
 // Breaths per round slider
 document.getElementById('wh-breaths').addEventListener('input', () => {
     document.getElementById('wh-breaths-val').textContent = document.getElementById('wh-breaths').value;
+});
+
+// Recovery duration slider
+document.getElementById('wh-recovery-dur').addEventListener('input', () => {
+    const v = parseInt(document.getElementById('wh-recovery-dur').value);
+    document.getElementById('wh-recovery-val').textContent = formatTime(v);
 });
 
 // Music toggle
@@ -1025,6 +1032,7 @@ document.getElementById('wh-start').addEventListener('click', () => {
     playClick();
     whTotalRounds = parseInt(document.getElementById('wh-rounds').value);
     whBreathsPerRound = parseInt(document.getElementById('wh-breaths').value);
+    whRecoveryDuration = parseInt(document.getElementById('wh-recovery-dur').value);
     whCurrentRound = 0;
     whRoundRetentions = [];
     // Start music
@@ -1124,18 +1132,27 @@ function startWhRetention() {
     }
 }
 
-document.getElementById('wh-breathe-in').addEventListener('click', () => {
-    playClick();
-    if (whInterval) { clearInterval(whInterval); whInterval = null; }
-    if (whRetentionVoiceInterval) { clearInterval(whRetentionVoiceInterval); whRetentionVoiceInterval = null; }
-    startWhRecovery();
+// Double-tap to end retention
+let whLastTap = 0;
+document.getElementById('wh-retention').addEventListener('click', (e) => {
+    const now = Date.now();
+    if (now - whLastTap < 400) {
+        // Double-tap detected
+        playClick();
+        if (whInterval) { clearInterval(whInterval); whInterval = null; }
+        if (whRetentionVoiceInterval) { clearInterval(whRetentionVoiceInterval); whRetentionVoiceInterval = null; }
+        whLastTap = 0;
+        startWhRecovery();
+    } else {
+        whLastTap = now;
+    }
 });
 
 function startWhRecovery() {
     showView('tracker-wimhof', 'wh-recovery');
     updateWhRoundInfo('wh-recovery-round');
-    let remaining = 15;
-    document.getElementById('wh-recovery-display').textContent = '0:15';
+    let remaining = whRecoveryDuration;
+    document.getElementById('wh-recovery-display').textContent = formatTime(remaining);
     if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
     whInterval = setInterval(() => {
         remaining--;
