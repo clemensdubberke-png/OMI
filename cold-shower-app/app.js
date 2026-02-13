@@ -324,6 +324,17 @@ let medTotal = 0;
 let medMusic = null;
 let musicEnabled = false;
 let selectedMusicSrc = '';
+let medVoiceEnabled = false;
+let medVoiceInterval = null;
+
+// Meditation focus voice clips
+const medFocusVoices = [
+    new Audio('lass deine Gedanken los.mp3'),
+    new Audio('kehre zurück zu deinem Atem.mp3'),
+    new Audio('spüre deinen Atem.mp3'),
+    new Audio('Bleibe bei deinem Atem.mp3'),
+];
+medFocusVoices.forEach(a => a.preload = 'auto');
 
 // Music toggle
 const musicToggle = document.getElementById('med-music-toggle');
@@ -352,6 +363,14 @@ document.querySelectorAll('.music-option').forEach(opt => {
     });
 });
 
+// Meditation voice toggle
+const medVoiceToggle = document.getElementById('med-voice-toggle');
+medVoiceToggle.addEventListener('click', () => {
+    playClick();
+    medVoiceEnabled = !medVoiceEnabled;
+    medVoiceToggle.classList.toggle('active', medVoiceEnabled);
+});
+
 document.getElementById('med-dur').addEventListener('input', () => {
     const v = parseInt(document.getElementById('med-dur').value);
     document.getElementById('med-dur-val').textContent = formatTime(v);
@@ -372,6 +391,14 @@ document.getElementById('med-start').addEventListener('click', () => {
         medMusic.loop = true;
         medMusic.play().catch(() => {});
     }
+    // Start focus voice if enabled
+    if (medVoiceEnabled) {
+        medVoiceInterval = setInterval(() => {
+            const clip = medFocusVoices[Math.floor(Math.random() * medFocusVoices.length)];
+            clip.currentTime = 0;
+            clip.play().catch(() => {});
+        }, 45000);
+    }
     medInterval = setInterval(() => {
         medRemaining--;
         document.getElementById('med-display').textContent = formatTime(medRemaining);
@@ -380,6 +407,7 @@ document.getElementById('med-start').addEventListener('click', () => {
         if (medRemaining <= 0) {
             clearInterval(medInterval);
             medInterval = null;
+            if (medVoiceInterval) { clearInterval(medVoiceInterval); medVoiceInterval = null; }
             stopMusicFadeOut();
             playGong();
             if (navigator.vibrate) navigator.vibrate([500, 200, 500]);
@@ -417,6 +445,7 @@ function stopMusicFadeOut() {
 
 function stopMeditation() {
     if (medInterval) { clearInterval(medInterval); medInterval = null; }
+    if (medVoiceInterval) { clearInterval(medVoiceInterval); medVoiceInterval = null; }
     if (medMusic) { medMusic.pause(); medMusic = null; }
 }
 

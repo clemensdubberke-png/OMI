@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cold-shower-v20';
+const CACHE_NAME = 'cold-shower-v21';
 const ASSETS = [
     './',
     './index.html',
@@ -34,7 +34,11 @@ const ASSETS = [
     './Tiefer als die Welle.mp3',
     './Nebel über meinem Kopf Version 1.mp3',
     './Atem wie ein leiser Fluss.mp3',
-    './Mystic Drums.mp3'
+    './Mystic Drums.mp3',
+    './lass deine Gedanken los.mp3',
+    './kehre zurück zu deinem Atem.mp3',
+    './spüre deinen Atem.mp3',
+    './Bleibe bei deinem Atem.mp3'
 ];
 
 self.addEventListener('install', event => {
