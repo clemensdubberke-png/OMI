@@ -616,8 +616,8 @@ function startBreathingPhase() {
 // --- Retention Phase ---
 
 // Retention voice clips
-const voiceHalteAtem = new Audio('halte deinen Atem so lange wie möglich.mp3');
-const voiceKribbeln = new Audio('wenn Hände und füße Kribbeln oder kribbeln ist das normal.mp3');
+const voiceHalteAtem = new Audio('halte deinen Atem so lange wie möglich an.mp3');
+const voiceKribbeln = new Audio('wenn Hände und füße Kribbeln oder körpertemperatur ändert, ist das normal.mp3');
 const voiceSeiEinfach = new Audio('sei einfach in diesem Moment.mp3');
 const voiceHerzschlag = new Audio('spüre deinen Herzschlag.mp3');
 const voiceEineMinute = new Audio('eine Minute.mp3');
