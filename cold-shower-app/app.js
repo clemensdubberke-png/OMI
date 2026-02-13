@@ -1211,12 +1211,14 @@ function startWhRecovery() {
 }
 
 function finishWhRound() {
-    playGong();
-    if (navigator.vibrate) navigator.vibrate([500, 200, 500]);
-
     if (whCurrentRound >= whTotalRounds) {
+        // Last round - play gong
+        playGong();
+        if (navigator.vibrate) navigator.vibrate([500, 200, 500]);
         finishWhAll();
     } else {
+        // Between rounds - no gong
+        if (navigator.vibrate) navigator.vibrate([200]);
         // Show round complete, then auto-advance
         document.getElementById('wh-round-done-title').textContent = `RUNDE ${whCurrentRound} GESCHAFFT`;
         document.getElementById('wh-round-retention').textContent = formatTime(whRetentionSeconds);
