@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cold-shower-v21';
+const CACHE_NAME = 'cold-shower-v22';
 const ASSETS = [
     './',
     './index.html',
@@ -26,7 +26,7 @@ const ASSETS = [
     './ein.mp3',
     './aus.mp3',
     './und aus.mp3',
-    './Folge dem Fluss deines atems ohne Widerstand.mp3',
+    './Folge dem Fluss deines atems ohne Pause dazwischen.mp3',
     './Gleichbleibender Strom.mp3',
     './Floating Breath.mp3',
     './Silent River Breath.mp3',
@@ -38,7 +38,16 @@ const ASSETS = [
     './lass deine Gedanken los.mp3',
     './kehre zurück zu deinem Atem.mp3',
     './spüre deinen Atem.mp3',
-    './Bleibe bei deinem Atem.mp3'
+    './Bleibe bei deinem Atem.mp3',
+    './halte deinen Atem so lange wie möglich.mp3',
+    './wenn Hände und füße Kribbeln oder kribbeln ist das normal.mp3',
+    './sei einfach in diesem Moment.mp3',
+    './spüre deinen Herzschlag.mp3',
+    './eine Minute.mp3',
+    './zwei Minuten.mp3',
+    './drei Minuten.mp3',
+    './vier Minuten.mp3',
+    './fünf Minuten.mp3'
 ];
 
 self.addEventListener('install', event => {

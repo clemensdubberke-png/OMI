@@ -514,7 +514,7 @@ const voiceEinatmen = new Audio('Einatmen.mp3');
 const voiceEin = new Audio('ein.mp3');
 const voiceAus = new Audio('aus.mp3');
 const voiceUndAus = new Audio('und aus.mp3');
-const voiceFolge = new Audio('Folge dem Fluss deines atems ohne Widerstand.mp3');
+const voiceFolge = new Audio('Folge dem Fluss deines atems ohne Pause dazwischen.mp3');
 [voiceAtmeEin, voiceAusatmen, voiceEinatmen, voiceEin, voiceAus, voiceUndAus, voiceFolge].forEach(a => a.preload = 'auto');
 
 function playVoice(audio) {
@@ -615,19 +615,71 @@ function startBreathingPhase() {
 
 // --- Retention Phase ---
 
+// Retention voice clips
+const voiceHalteAtem = new Audio('halte deinen Atem so lange wie möglich.mp3');
+const voiceKribbeln = new Audio('wenn Hände und füße Kribbeln oder kribbeln ist das normal.mp3');
+const voiceSeiEinfach = new Audio('sei einfach in diesem Moment.mp3');
+const voiceHerzschlag = new Audio('spüre deinen Herzschlag.mp3');
+const voiceEineMinute = new Audio('eine Minute.mp3');
+const voiceZweiMinuten = new Audio('zwei Minuten.mp3');
+const voiceDreiMinuten = new Audio('drei Minuten.mp3');
+const voiceVierMinuten = new Audio('vier Minuten.mp3');
+const voiceFuenfMinuten = new Audio('fünf Minuten.mp3');
+[voiceHalteAtem, voiceKribbeln, voiceSeiEinfach, voiceHerzschlag,
+ voiceEineMinute, voiceZweiMinuten, voiceDreiMinuten, voiceVierMinuten, voiceFuenfMinuten
+].forEach(a => a.preload = 'auto');
+
+const retentionRandomClips = [voiceKribbeln, voiceSeiEinfach, voiceHerzschlag];
+const retentionMinuteClips = {
+    60: voiceEineMinute,
+    120: voiceZweiMinuten,
+    180: voiceDreiMinuten,
+    240: voiceVierMinuten,
+    300: voiceFuenfMinuten,
+};
+
+let retentionVoiceInterval = null;
+
 function startRetentionPhase() {
     showView('tracker-atmung', 'atmung-retention');
     atmRetentionSeconds = 0;
     document.getElementById('atm-retention-display').textContent = '0:00';
+
+    // Play initial retention voice
+    if (atmVoiceEnabled) {
+        voiceHalteAtem.currentTime = 0;
+        voiceHalteAtem.play().catch(() => {});
+    }
+
     atmInterval = setInterval(() => {
         atmRetentionSeconds++;
         document.getElementById('atm-retention-display').textContent = formatTime(atmRetentionSeconds);
+
+        // Voice at minute marks
+        if (atmVoiceEnabled && retentionMinuteClips[atmRetentionSeconds]) {
+            const clip = retentionMinuteClips[atmRetentionSeconds];
+            clip.currentTime = 0;
+            clip.play().catch(() => {});
+        }
     }, 1000);
+
+    // Random voice every 30 seconds
+    if (atmVoiceEnabled) {
+        retentionVoiceInterval = setInterval(() => {
+            // Skip if a minute marker is playing at the same time
+            if (!retentionMinuteClips[atmRetentionSeconds]) {
+                const clip = retentionRandomClips[Math.floor(Math.random() * retentionRandomClips.length)];
+                clip.currentTime = 0;
+                clip.play().catch(() => {});
+            }
+        }, 30000);
+    }
 }
 
 document.getElementById('atm-breathe-in').addEventListener('click', () => {
     playClick();
     if (atmInterval) { clearInterval(atmInterval); atmInterval = null; }
+    if (retentionVoiceInterval) { clearInterval(retentionVoiceInterval); retentionVoiceInterval = null; }
     startRecoveryPhase();
 });
 
@@ -677,6 +729,7 @@ document.getElementById('atm-done').addEventListener('click', () => {
 
 function stopAtmung() {
     if (atmInterval) { clearTimeout(atmInterval); clearInterval(atmInterval); atmInterval = null; }
+    if (retentionVoiceInterval) { clearInterval(retentionVoiceInterval); retentionVoiceInterval = null; }
     if (atmMusic) { atmMusic.pause(); atmMusic = null; }
 }
 
