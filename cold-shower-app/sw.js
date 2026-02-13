@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cold-shower-v22';
+const CACHE_NAME = 'cold-shower-v23';
 const ASSETS = [
     './',
     './index.html',
@@ -47,7 +47,8 @@ const ASSETS = [
     './zwei Minuten.mp3',
     './drei Minuten.mp3',
     './vier Minuten.mp3',
-    './fünf Minuten.mp3'
+    './fünf Minuten.mp3',
+    './Atem Trance .mp3'
 ];
 
 self.addEventListener('install', event => {

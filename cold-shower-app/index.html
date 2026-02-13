@@ -320,6 +320,147 @@
         </div>
     </div>
 
+    <!-- ===== ATEM SUB-MENU SCREEN ===== -->
+    <div id="atem-menu" class="screen">
+        <div class="fog-wrapper">
+            <div class="fog fog-1"></div>
+            <div class="fog fog-2"></div>
+            <div class="fog fog-3"></div>
+        </div>
+        <canvas class="particles-canvas"></canvas>
+        <div class="vignette"></div>
+        <button class="back-btn" id="back-to-main-atem">&larr;</button>
+        <div class="kaelte-menu-grid">
+            <div class="kaelte-row kaelte-row-center">
+                <div class="kaelte-item" id="wimhof-btn">
+                    <div class="glow-ring glow-bronze"></div>
+                    <img src="atem.jpg" alt="Wim Hof Atemtechnik" class="kaelte-item-img">
+                    <span class="kaelte-item-label">WIM HOF ATEMTECHNIK</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== WIM HOF ATEMTECHNIK TRACKER ===== -->
+    <div id="tracker-wimhof" class="screen">
+        <div class="fog-wrapper">
+            <div class="fog fog-1"></div>
+            <div class="fog fog-2"></div>
+            <div class="fog fog-3"></div>
+        </div>
+        <canvas class="particles-canvas"></canvas>
+        <div class="vignette"></div>
+        <button class="back-btn" id="back-to-atem">&larr;</button>
+        <!-- Setup -->
+        <div id="wh-setup" class="tracker-view">
+            <h1 class="tracker-title">WIM HOF ATEMTECHNIK</h1>
+            <img src="atem.jpg" alt="Wim Hof" class="tracker-icon">
+            <div class="slider-group">
+                <label class="slider-label">
+                    <span class="label-text">Geschwindigkeit</span>
+                </label>
+                <div class="speed-selector" id="wh-speed-selector">
+                    <button class="speed-btn" data-speed="slow">Langsam</button>
+                    <button class="speed-btn active" data-speed="medium">Mittel</button>
+                    <button class="speed-btn" data-speed="fast">Schnell</button>
+                </div>
+            </div>
+            <div class="slider-group">
+                <label class="slider-label">
+                    <span class="label-text">Runden</span>
+                    <span class="label-value" id="wh-rounds-val">3</span>
+                </label>
+                <input type="range" id="wh-rounds" class="slider med-slider" min="1" max="10" value="3" step="1">
+            </div>
+            <div class="music-selector">
+                <div class="music-toggle-row">
+                    <span class="label-text">Musik</span>
+                    <button class="music-toggle" id="wh-music-toggle">
+                        <span class="toggle-knob"></span>
+                    </button>
+                </div>
+                <div class="music-options hidden" id="wh-music-options">
+                    <div class="music-option selected" data-src="Atem Trance .mp3">
+                        <span class="music-option-name">Atem Trance</span>
+                    </div>
+                    <div class="music-option" data-src="Gleichbleibender Strom.mp3">
+                        <span class="music-option-name">Gleichbleibender Strom</span>
+                    </div>
+                    <div class="music-option" data-src="Floating Breath.mp3">
+                        <span class="music-option-name">Floating Breath</span>
+                    </div>
+                    <div class="music-option" data-src="Silent River Breath.mp3">
+                        <span class="music-option-name">Silent River Breath</span>
+                    </div>
+                    <div class="music-option" data-src="Silent River Mind.mp3">
+                        <span class="music-option-name">Silent River Mind</span>
+                    </div>
+                    <div class="music-option" data-src="Tiefer als die Welle.mp3">
+                        <span class="music-option-name">Tiefer als die Welle</span>
+                    </div>
+                    <div class="music-option" data-src="Nebel über meinem Kopf Version 1.mp3">
+                        <span class="music-option-name">Nebel über meinem Kopf</span>
+                    </div>
+                    <div class="music-option" data-src="Mystic Drums.mp3">
+                        <span class="music-option-name">Mystic Drums</span>
+                    </div>
+                </div>
+            </div>
+            <button class="start-btn" id="wh-start">START</button>
+        </div>
+        <!-- Breathing Phase -->
+        <div id="wh-breathing" class="tracker-view hidden">
+            <div class="timer-phase" id="wh-phase">EINATMEN</div>
+            <div class="atm-breath-count" id="wh-round-info">Runde 1 / 3</div>
+            <div class="atm-breath-count" id="wh-count">1 / 30</div>
+            <div class="atm-image-container">
+                <img src="atem.jpg" alt="" class="atm-breath-img" id="wh-breath-img">
+            </div>
+            <div class="atm-instruction" id="wh-instruction">Atme tief ein...</div>
+        </div>
+        <!-- Retention Phase -->
+        <div id="wh-retention" class="tracker-view hidden">
+            <div class="timer-phase">ATEM ANHALTEN</div>
+            <div class="atm-breath-count" id="wh-retention-round">Runde 1 / 3</div>
+            <div class="timer-display" id="wh-retention-display">0:00</div>
+            <div class="atm-image-container">
+                <img src="atem.jpg" alt="" class="atm-breath-img atm-small">
+            </div>
+            <div class="atm-instruction">Halte den Atem an, so lange du kannst.</div>
+            <button class="start-btn" id="wh-breathe-in">EINATMEN</button>
+        </div>
+        <!-- Recovery Breath -->
+        <div id="wh-recovery" class="tracker-view hidden">
+            <div class="timer-phase">RECOVERY BREATH</div>
+            <div class="atm-breath-count" id="wh-recovery-round">Runde 1 / 3</div>
+            <div class="timer-display" id="wh-recovery-display">0:15</div>
+            <div class="atm-image-container">
+                <img src="atem.jpg" alt="" class="atm-breath-img atm-large">
+            </div>
+            <div class="atm-instruction">Tief einatmen und halten.</div>
+        </div>
+        <!-- Round Complete -->
+        <div id="wh-round-done" class="tracker-view hidden">
+            <div class="done-icon">&#10003;</div>
+            <h2 class="done-title" id="wh-round-done-title">RUNDE 1 GESCHAFFT</h2>
+            <div class="done-stats">
+                <div class="stat"><span class="stat-label">Retention</span><span class="stat-value" id="wh-round-retention"></span></div>
+            </div>
+            <button class="start-btn" id="wh-next-round">NÄCHSTE RUNDE</button>
+        </div>
+        <!-- All Done -->
+        <div id="wh-done" class="tracker-view hidden">
+            <div class="done-icon">&#10003;</div>
+            <h2 class="done-title">GESCHAFFT!</h2>
+            <div class="rounds-summary" id="wh-summary"></div>
+            <div class="done-stats">
+                <div class="stat"><span class="stat-label">Runden</span><span class="stat-value" id="wh-stat-rounds"></span></div>
+                <div class="stat"><span class="stat-label">Gesamt Retention</span><span class="stat-value" id="wh-stat-total-retention"></span></div>
+            </div>
+            <button class="start-btn" id="wh-done-btn">ZURÜCK</button>
+        </div>
+    </div>
+
     <!-- ===== KÄLTE SUB-MENU SCREEN ===== -->
     <div id="kaelte-menu" class="screen">
         <div class="fog-wrapper">

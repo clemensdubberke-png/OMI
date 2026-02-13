@@ -41,7 +41,8 @@ const CIRC = 2 * Math.PI * 90;
 document.getElementById('kaelte-btn').addEventListener('click', () => { playClick(); showScreen('kaelte-menu'); });
 document.getElementById('back-to-main').addEventListener('click', () => { playClick(); showScreen('main-menu'); });
 document.getElementById('geist-btn').addEventListener('click', () => { playClick(); showScreen('geist-menu'); });
-document.getElementById('atem-btn').addEventListener('click', () => { playClick(); });
+document.getElementById('atem-btn').addEventListener('click', () => { playClick(); showScreen('atem-menu'); });
+document.getElementById('back-to-main-atem').addEventListener('click', () => { playClick(); showScreen('main-menu'); });
 document.getElementById('back-to-main-geist').addEventListener('click', () => { playClick(); showScreen('main-menu'); });
 
 // Back buttons for all tracker screens
@@ -888,6 +889,229 @@ function stopLiegestuetze() {
     if (lgInterval) { clearTimeout(lgInterval); clearInterval(lgInterval); lgInterval = null; }
 }
 
+// ===== WIM HOF ATEMTECHNIK =====
+
+document.getElementById('wimhof-btn').addEventListener('click', () => {
+    playClick();
+    showScreen('tracker-wimhof');
+    showView('tracker-wimhof', 'wh-setup');
+});
+
+document.getElementById('back-to-atem').addEventListener('click', () => {
+    playClick();
+    stopWimhof();
+    showScreen('atem-menu');
+});
+
+let whInterval = null;
+let whMusic = null;
+let whMusicEnabled = false;
+let whSelectedSrc = '';
+let whCurrentRound = 0;
+let whTotalRounds = 3;
+let whRetentionSeconds = 0;
+let whRoundRetentions = [];
+const whBreathsPerRound = 30;
+
+const whSpeeds = {
+    slow:   { inhale: 4000, exhale: 2500 },
+    medium: { inhale: 3000, exhale: 1700 },
+    fast:   { inhale: 2000, exhale: 1200 },
+};
+let whSpeed = 'medium';
+
+// Speed selector
+document.querySelectorAll('#wh-speed-selector .speed-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        playClick();
+        document.querySelectorAll('#wh-speed-selector .speed-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        whSpeed = btn.dataset.speed;
+    });
+});
+
+// Rounds slider
+document.getElementById('wh-rounds').addEventListener('input', () => {
+    document.getElementById('wh-rounds-val').textContent = document.getElementById('wh-rounds').value;
+});
+
+// Music toggle
+const whMusicToggle = document.getElementById('wh-music-toggle');
+const whMusicOptions = document.getElementById('wh-music-options');
+
+whMusicToggle.addEventListener('click', () => {
+    playClick();
+    whMusicEnabled = !whMusicEnabled;
+    whMusicToggle.classList.toggle('active', whMusicEnabled);
+    whMusicOptions.classList.toggle('hidden', !whMusicEnabled);
+    if (!whMusicEnabled) {
+        whSelectedSrc = '';
+    } else {
+        const sel = whMusicOptions.querySelector('.music-option.selected');
+        if (sel) whSelectedSrc = sel.dataset.src;
+    }
+});
+
+whMusicOptions.querySelectorAll('.music-option').forEach(opt => {
+    opt.addEventListener('click', () => {
+        playClick();
+        whMusicOptions.querySelectorAll('.music-option').forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+        whSelectedSrc = opt.dataset.src;
+    });
+});
+
+// Start
+document.getElementById('wh-start').addEventListener('click', () => {
+    playClick();
+    whTotalRounds = parseInt(document.getElementById('wh-rounds').value);
+    whCurrentRound = 0;
+    whRoundRetentions = [];
+    // Start music
+    if (whMusicEnabled && whSelectedSrc) {
+        whMusic = new Audio(whSelectedSrc);
+        whMusic.loop = true;
+        whMusic.play().catch(() => {});
+    }
+    startWhNextRound();
+});
+
+function startWhNextRound() {
+    whCurrentRound++;
+    showView('tracker-wimhof', 'wh-breathing');
+    startWhBreathing();
+}
+
+function updateWhRoundInfo(elementId) {
+    const el = document.getElementById(elementId);
+    if (el) el.textContent = `Runde ${whCurrentRound} / ${whTotalRounds}`;
+}
+
+function startWhBreathing() {
+    const img = document.getElementById('wh-breath-img');
+    const phase = document.getElementById('wh-phase');
+    const count = document.getElementById('wh-count');
+    const instruction = document.getElementById('wh-instruction');
+    updateWhRoundInfo('wh-round-info');
+    let breath = 0;
+    const speed = whSpeeds[whSpeed];
+
+    function doInhale() {
+        breath++;
+        if (breath > whBreathsPerRound) {
+            startWhRetention();
+            return;
+        }
+        count.textContent = `${breath} / ${whBreathsPerRound}`;
+        phase.textContent = 'EINATMEN';
+        instruction.textContent = 'Atme tief ein...';
+        img.classList.remove('atm-exhale');
+        img.classList.add('atm-inhale');
+        if (navigator.vibrate) navigator.vibrate(50);
+        whInterval = setTimeout(doExhale, speed.inhale);
+    }
+
+    function doExhale() {
+        phase.textContent = 'AUSATMEN';
+        instruction.textContent = 'Langsam ausatmen...';
+        img.classList.remove('atm-inhale');
+        img.classList.add('atm-exhale');
+        whInterval = setTimeout(doInhale, speed.exhale);
+    }
+
+    doInhale();
+}
+
+function startWhRetention() {
+    showView('tracker-wimhof', 'wh-retention');
+    updateWhRoundInfo('wh-retention-round');
+    whRetentionSeconds = 0;
+    document.getElementById('wh-retention-display').textContent = '0:00';
+    whInterval = setInterval(() => {
+        whRetentionSeconds++;
+        document.getElementById('wh-retention-display').textContent = formatTime(whRetentionSeconds);
+    }, 1000);
+}
+
+document.getElementById('wh-breathe-in').addEventListener('click', () => {
+    playClick();
+    if (whInterval) { clearInterval(whInterval); whInterval = null; }
+    startWhRecovery();
+});
+
+function startWhRecovery() {
+    showView('tracker-wimhof', 'wh-recovery');
+    updateWhRoundInfo('wh-recovery-round');
+    let remaining = 15;
+    document.getElementById('wh-recovery-display').textContent = '0:15';
+    if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+    whInterval = setInterval(() => {
+        remaining--;
+        document.getElementById('wh-recovery-display').textContent = formatTime(remaining);
+        if (remaining <= 0) {
+            clearInterval(whInterval);
+            whInterval = null;
+            whRoundRetentions.push(whRetentionSeconds);
+            finishWhRound();
+        }
+    }, 1000);
+}
+
+function finishWhRound() {
+    playGong();
+    if (navigator.vibrate) navigator.vibrate([500, 200, 500]);
+
+    if (whCurrentRound >= whTotalRounds) {
+        // All rounds done
+        finishWhAll();
+    } else {
+        // Show round complete screen
+        document.getElementById('wh-round-done-title').textContent = `RUNDE ${whCurrentRound} GESCHAFFT`;
+        document.getElementById('wh-round-retention').textContent = formatTime(whRetentionSeconds);
+        showView('tracker-wimhof', 'wh-round-done');
+    }
+}
+
+document.getElementById('wh-next-round').addEventListener('click', () => {
+    playClick();
+    startWhNextRound();
+});
+
+function finishWhAll() {
+    // Fade out music
+    if (whMusic) {
+        let vol = whMusic.volume;
+        const fade = setInterval(() => {
+            vol -= 0.1;
+            if (vol <= 0) {
+                clearInterval(fade);
+                whMusic.pause();
+                whMusic = null;
+            } else {
+                whMusic.volume = vol;
+            }
+        }, 150);
+    }
+    // Summary
+    document.getElementById('wh-summary').innerHTML = whRoundRetentions.map((r, i) =>
+        `<div class="round-result">Runde ${i + 1}: <strong>${formatTime(r)}</strong></div>`
+    ).join('');
+    document.getElementById('wh-stat-rounds').textContent = whTotalRounds;
+    const totalRetention = whRoundRetentions.reduce((a, b) => a + b, 0);
+    document.getElementById('wh-stat-total-retention').textContent = formatTime(totalRetention);
+    showView('tracker-wimhof', 'wh-done');
+}
+
+document.getElementById('wh-done-btn').addEventListener('click', () => {
+    playClick();
+    showView('tracker-wimhof', 'wh-setup');
+});
+
+function stopWimhof() {
+    if (whInterval) { clearTimeout(whInterval); clearInterval(whInterval); whInterval = null; }
+    if (whMusic) { whMusic.pause(); whMusic = null; }
+}
+
 // ===== STOP ALL TIMERS =====
 
 function stopAllTimers() {
@@ -896,6 +1120,7 @@ function stopAllTimers() {
     stopMeditation();
     stopAtmung();
     stopLiegestuetze();
+    stopWimhof();
     if (roundsInterval) { clearInterval(roundsInterval); roundsInterval = null; }
 }
 

@@ -619,6 +619,39 @@ html, body {
     font-size: 16px !important;
 }
 
+/* ===== SPEED SELECTOR ===== */
+
+.speed-selector {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+    margin-top: 6px;
+}
+
+.speed-btn {
+    flex: 1;
+    padding: 10px 6px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.speed-btn.active {
+    color: #fff;
+    background: linear-gradient(135deg, #6b4c1a, #c8a050);
+    border-color: #c8a050;
+}
+
+.speed-btn:active {
+    transform: scale(0.95);
+}
+
 /* ===== BUTTONS ===== */
 
 .start-btn {
