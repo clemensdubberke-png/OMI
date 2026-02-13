@@ -911,9 +911,10 @@ let whCurrentRound = 0;
 let whTotalRounds = 3;
 let whRetentionSeconds = 0;
 let whRoundRetentions = [];
-const whBreathsPerRound = 30;
+let whBreathsPerRound = 30;
 let whBreathSoundEnabled = false;
 let whVoiceEnabled = false;
+let whRetentionGuideEnabled = false;
 let whRetentionVoiceInterval = null;
 
 const whSpeeds = {
@@ -936,6 +937,11 @@ document.querySelectorAll('#wh-speed-selector .speed-btn').forEach(btn => {
 // Rounds slider
 document.getElementById('wh-rounds').addEventListener('input', () => {
     document.getElementById('wh-rounds-val').textContent = document.getElementById('wh-rounds').value;
+});
+
+// Breaths per round slider
+document.getElementById('wh-breaths').addEventListener('input', () => {
+    document.getElementById('wh-breaths-val').textContent = document.getElementById('wh-breaths').value;
 });
 
 // Music toggle
@@ -980,6 +986,14 @@ whVoiceToggle.addEventListener('click', () => {
     whVoiceToggle.classList.toggle('active', whVoiceEnabled);
 });
 
+// Retention guide toggle (Anleitung Haltephase)
+const whRetentionGuideToggle = document.getElementById('wh-retention-guide-toggle');
+whRetentionGuideToggle.addEventListener('click', () => {
+    playClick();
+    whRetentionGuideEnabled = !whRetentionGuideEnabled;
+    whRetentionGuideToggle.classList.toggle('active', whRetentionGuideEnabled);
+});
+
 function playWhVoice(audio) {
     if (!whVoiceEnabled) return;
     audio.currentTime = 0;
@@ -1010,6 +1024,7 @@ const whVoiceSchedule = {
 document.getElementById('wh-start').addEventListener('click', () => {
     playClick();
     whTotalRounds = parseInt(document.getElementById('wh-rounds').value);
+    whBreathsPerRound = parseInt(document.getElementById('wh-breaths').value);
     whCurrentRound = 0;
     whRoundRetentions = [];
     // Start music
@@ -1079,8 +1094,8 @@ function startWhRetention() {
     whRetentionSeconds = 0;
     document.getElementById('wh-retention-display').textContent = '0:00';
 
-    // Play initial retention voice
-    if (whVoiceEnabled) {
+    // Play initial retention voice (Anleitung Haltephase)
+    if (whRetentionGuideEnabled) {
         voiceHalteAtem.currentTime = 0;
         voiceHalteAtem.play().catch(() => {});
     }
@@ -1089,16 +1104,16 @@ function startWhRetention() {
         whRetentionSeconds++;
         document.getElementById('wh-retention-display').textContent = formatTime(whRetentionSeconds);
 
-        // Voice at minute marks
-        if (whVoiceEnabled && retentionMinuteClips[whRetentionSeconds]) {
+        // Voice at minute marks (Anleitung)
+        if (whRetentionGuideEnabled && retentionMinuteClips[whRetentionSeconds]) {
             const clip = retentionMinuteClips[whRetentionSeconds];
             clip.currentTime = 0;
             clip.play().catch(() => {});
         }
     }, 1000);
 
-    // Random voice every 30 seconds
-    if (whVoiceEnabled) {
+    // Random voice every 30 seconds (Anleitung)
+    if (whRetentionGuideEnabled) {
         whRetentionVoiceInterval = setInterval(() => {
             if (!retentionMinuteClips[whRetentionSeconds]) {
                 const clip = retentionRandomClips[Math.floor(Math.random() * retentionRandomClips.length)];

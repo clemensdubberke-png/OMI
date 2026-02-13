@@ -372,6 +372,13 @@
                 </label>
                 <input type="range" id="wh-rounds" class="slider med-slider" min="1" max="10" value="3" step="1">
             </div>
+            <div class="slider-group">
+                <label class="slider-label">
+                    <span class="label-text">Atemzüge pro Runde</span>
+                    <span class="label-value" id="wh-breaths-val">30</span>
+                </label>
+                <input type="range" id="wh-breaths" class="slider med-slider" min="5" max="60" value="30" step="1">
+            </div>
             <div class="music-selector">
                 <div class="music-toggle-row">
                     <span class="label-text">Musik</span>
@@ -418,6 +425,14 @@
                 <div class="music-toggle-row">
                     <span class="label-text">Stimme</span>
                     <button class="music-toggle" id="wh-voice-toggle">
+                        <span class="toggle-knob"></span>
+                    </button>
+                </div>
+            </div>
+            <div class="music-selector">
+                <div class="music-toggle-row">
+                    <span class="label-text">Anleitung Haltephase</span>
+                    <button class="music-toggle" id="wh-retention-guide-toggle">
                         <span class="toggle-knob"></span>
                     </button>
                 </div>
