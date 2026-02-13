@@ -1148,15 +1148,51 @@ document.getElementById('wh-retention').addEventListener('click', (e) => {
     }
 });
 
+// Recovery phase voice clips
+const voiceAtmeTiefEin = new Audio('Atme tief ein und halte deinen Atem an.mp3');
+const voiceAusatmen10 = new Audio('Ausatmen in 10 Sekunden.mp3');
+const voiceJetzt = new Audio('Jetzt.mp3');
+const voiceCountdown = {
+    5: new Audio('5.mp3'),
+    4: new Audio('4.mp3'),
+    3: new Audio('3.mp3'),
+    2: new Audio('2.mp3'),
+    1: new Audio('1.mp3'),
+};
+[voiceAtmeTiefEin, voiceAusatmen10, voiceJetzt,
+ voiceCountdown[5], voiceCountdown[4], voiceCountdown[3], voiceCountdown[2], voiceCountdown[1]
+].forEach(a => a.preload = 'auto');
+
 function startWhRecovery() {
     showView('tracker-wimhof', 'wh-recovery');
     updateWhRoundInfo('wh-recovery-round');
     let remaining = whRecoveryDuration;
     document.getElementById('wh-recovery-display').textContent = formatTime(remaining);
     if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+
+    // Play "Atme tief ein und halte deinen Atem an"
+    if (whRetentionGuideEnabled) {
+        voiceAtmeTiefEin.currentTime = 0;
+        voiceAtmeTiefEin.play().catch(() => {});
+    }
+
     whInterval = setInterval(() => {
         remaining--;
         document.getElementById('wh-recovery-display').textContent = formatTime(remaining);
+
+        if (whRetentionGuideEnabled) {
+            if (remaining === 10) {
+                voiceAusatmen10.currentTime = 0;
+                voiceAusatmen10.play().catch(() => {});
+            } else if (remaining >= 1 && remaining <= 5 && voiceCountdown[remaining]) {
+                voiceCountdown[remaining].currentTime = 0;
+                voiceCountdown[remaining].play().catch(() => {});
+            } else if (remaining === 0) {
+                voiceJetzt.currentTime = 0;
+                voiceJetzt.play().catch(() => {});
+            }
+        }
+
         if (remaining <= 0) {
             clearInterval(whInterval);
             whInterval = null;
