@@ -843,6 +843,172 @@ html, body {
     color: #b0d4f1;
 }
 
+/* ===== RECORDS BUTTON (Main Menu) ===== */
+
+.records-btn {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    background: rgba(200, 160, 80, 0.15);
+    border: 1px solid rgba(200, 160, 80, 0.3);
+    color: #c8a050;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.records-btn:active {
+    background: rgba(200, 160, 80, 0.35);
+    transform: scale(0.93);
+}
+
+/* ===== RECORDS SCREEN ===== */
+
+.records-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 400px;
+    padding: 60px 20px 40px;
+    gap: 20px;
+    position: relative;
+    z-index: 2;
+}
+
+.records-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.records-trophy {
+    filter: drop-shadow(0 0 8px rgba(200, 160, 80, 0.4));
+}
+
+.records-title {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    color: #c8a050;
+}
+
+.records-section {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.records-section-title {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.records-section-ice {
+    color: #4a9eda;
+    border-bottom-color: rgba(74, 158, 218, 0.2);
+}
+
+.records-section-bronze {
+    color: #c8a050;
+    border-bottom-color: rgba(200, 160, 80, 0.2);
+}
+
+.record-card {
+    background: rgba(70, 160, 220, 0.06);
+    border: 1px solid rgba(70, 160, 220, 0.15);
+    border-radius: 12px;
+    padding: 14px 16px;
+}
+
+.record-card-bronze {
+    background: rgba(200, 160, 80, 0.06);
+    border-color: rgba(200, 160, 80, 0.15);
+}
+
+.record-card-title {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 10px;
+}
+
+.record-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0;
+}
+
+.record-label {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.record-value {
+    font-size: 16px;
+    font-weight: 700;
+    color: #b0d4f1;
+    font-variant-numeric: tabular-nums;
+}
+
+.record-card-bronze .record-value {
+    color: #c8a050;
+}
+
+.records-reset-btn {
+    margin-top: 20px;
+    background: rgba(200, 80, 60, 0.15) !important;
+    border: 1px solid rgba(200, 80, 60, 0.3) !important;
+    color: rgba(255, 180, 160, 0.7) !important;
+    font-size: 13px !important;
+    letter-spacing: 2px !important;
+    padding: 12px !important;
+}
+
+.records-reset-btn:active {
+    background: rgba(200, 80, 60, 0.3) !important;
+}
+
+/* ===== NEW RECORD BADGE ===== */
+
+.new-record-badge {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: #c8a050;
+    padding: 6px 20px;
+    border: 1px solid rgba(200, 160, 80, 0.4);
+    border-radius: 20px;
+    background: rgba(200, 160, 80, 0.1);
+    animation: record-glow 1.5s ease-in-out infinite;
+}
+
+.new-record-badge.hidden {
+    display: none;
+}
+
+@keyframes record-glow {
+    0%, 100% {
+        box-shadow: 0 0 8px rgba(200, 160, 80, 0.2);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(200, 160, 80, 0.5), 0 0 40px rgba(200, 160, 80, 0.2);
+    }
+}
+
 /* ===== RESPONSIVE ===== */
 
 @media (max-height: 640px) {

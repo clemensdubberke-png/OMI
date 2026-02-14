@@ -36,6 +36,101 @@ function showView(parentId, viewId) {
 
 const CIRC = 2 * Math.PI * 90;
 
+// ===== RECORDS (localStorage) =====
+
+function loadRecords() {
+    try {
+        const data = localStorage.getItem('coldshower_records');
+        return data ? JSON.parse(data) : {};
+    } catch (e) {
+        return {};
+    }
+}
+
+function saveRecords(records) {
+    localStorage.setItem('coldshower_records', JSON.stringify(records));
+}
+
+function checkAndSaveRecord(category, field, value, lowerIsBetter) {
+    const records = loadRecords();
+    if (!records[category]) records[category] = {};
+    const current = records[category][field];
+    let isNew = false;
+    if (current === undefined || current === null) {
+        isNew = true;
+    } else if (lowerIsBetter) {
+        isNew = value < current;
+    } else {
+        isNew = value > current;
+    }
+    if (isNew) {
+        records[category][field] = value;
+        saveRecords(records);
+    }
+    return isNew;
+}
+
+function showNewRecordBadge(badgeId, isNew) {
+    const badge = document.getElementById(badgeId);
+    if (badge) {
+        badge.classList.toggle('hidden', !isNew);
+    }
+}
+
+function updateRecordsDisplay() {
+    const records = loadRecords();
+    const setVal = (id, val, suffix) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = val !== undefined && val !== null ? (suffix ? val + suffix : val) : '--';
+    };
+    const setTime = (id, val) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = val !== undefined && val !== null ? formatTime(val) : '--';
+    };
+
+    // Kälte
+    ['eisdusche', 'eisbaden', 'gesicht', 'hand', 'fuss'].forEach(cat => {
+        const r = records[cat] || {};
+        setVal(`rec-${cat}-temp`, r.coldestTemp, '\u00B0C');
+        setTime(`rec-${cat}-time`, r.longestTime);
+    });
+
+    // Geist
+    const med = records.meditation || {};
+    setTime('rec-meditation-time', med.longestSession);
+
+    const atm = records.atmung || {};
+    setTime('rec-atmung-retention', atm.longestRetention);
+
+    const lg = records.liegestuetze || {};
+    setVal('rec-liegestuetze-count', lg.mostPushups, '');
+
+    // Atem
+    const wh = records.wimhof || {};
+    setVal('rec-wimhof-rounds', wh.mostRounds, '');
+    setTime('rec-wimhof-retention', wh.longestRetention);
+}
+
+// Records screen navigation
+document.getElementById('records-btn').addEventListener('click', () => {
+    playClick();
+    updateRecordsDisplay();
+    showScreen('records-screen');
+});
+
+document.getElementById('back-to-main-records').addEventListener('click', () => {
+    playClick();
+    showScreen('main-menu');
+});
+
+document.getElementById('records-reset').addEventListener('click', () => {
+    playClick();
+    if (confirm('Alle Rekorde wirklich zurücksetzen?')) {
+        localStorage.removeItem('coldshower_records');
+        updateRecordsDisplay();
+    }
+});
+
 // ===== MAIN MENU NAVIGATION =====
 
 document.getElementById('kaelte-btn').addEventListener('click', () => { playClick(); showScreen('kaelte-menu'); });
@@ -163,6 +258,11 @@ function createCountdownTracker(prefix, screenId, activityLabel) {
         if (navigator.vibrate) navigator.vibrate([500, 200, 500]);
         els.statDur.textContent = formatTime(duration);
         els.statTemp.textContent = `${temp}°C`;
+        // Save records
+        const category = prefix === 'ed' ? 'eisdusche' : 'eisbaden';
+        const newTemp = checkAndSaveRecord(category, 'coldestTemp', temp, true);
+        const newTime = checkAndSaveRecord(category, 'longestTime', duration, false);
+        showNewRecordBadge(`${prefix}-new-record`, newTemp || newTime);
         showView(screenId, `${prefix.replace('-', '')}-done`);
     }
 
@@ -286,14 +386,19 @@ document.getElementById('rounds-finish').addEventListener('click', () => {
     }
     if (navigator.vibrate) navigator.vibrate([500, 200, 500]);
     const totalSecs = roundsData.reduce((a, b) => a + b, 0);
+    const longestRound = roundsData.length > 0 ? Math.max(...roundsData) : 0;
+    const temp = parseInt(document.getElementById('rounds-temp').value);
     // Summary
     document.getElementById('rounds-summary').innerHTML = roundsData.map((r, i) =>
         `<div class="round-result">Runde ${i + 1}: <strong>${formatTime(r)}</strong></div>`
     ).join('');
     document.getElementById('rounds-stat-count').textContent = roundsData.length;
     document.getElementById('rounds-stat-total').textContent = formatTime(totalSecs);
-    document.getElementById('rounds-stat-temp').textContent =
-        `${document.getElementById('rounds-temp').value}°C`;
+    document.getElementById('rounds-stat-temp').textContent = `${temp}°C`;
+    // Save records
+    const newTemp = checkAndSaveRecord(currentRoundsType, 'coldestTemp', temp, true);
+    const newTime = checkAndSaveRecord(currentRoundsType, 'longestTime', longestRound, false);
+    showNewRecordBadge('rounds-new-record', newTemp || newTime);
     showView('tracker-rounds', 'rounds-done');
 });
 
@@ -413,6 +518,9 @@ document.getElementById('med-start').addEventListener('click', () => {
             playGong();
             if (navigator.vibrate) navigator.vibrate([500, 200, 500]);
             document.getElementById('med-stat-dur').textContent = formatTime(medTotal);
+            // Save records
+            const newRecord = checkAndSaveRecord('meditation', 'longestSession', medTotal, false);
+            showNewRecordBadge('med-new-record', newRecord);
             showView('tracker-meditation', 'meditation-done');
         }
     }, 1000);
@@ -720,6 +828,9 @@ function finishAtmung() {
     playGong();
     if (navigator.vibrate) navigator.vibrate([500, 200, 500]);
     document.getElementById('atm-stat-retention').textContent = formatTime(atmRetentionSeconds);
+    // Save records
+    const newRecord = checkAndSaveRecord('atmung', 'longestRetention', atmRetentionSeconds, false);
+    showNewRecordBadge('atm-new-record', newRecord);
     showView('tracker-atmung', 'atmung-done');
 }
 
@@ -877,6 +988,9 @@ document.getElementById('lg-finish').addEventListener('click', () => {
     document.getElementById('lg-stat-breaths').textContent = lgTotalBreaths;
     document.getElementById('lg-stat-pushups').textContent = lgPushupCount;
     document.getElementById('lg-stat-retention').textContent = formatTime(lgRetentionSeconds);
+    // Save records
+    const newRecord = checkAndSaveRecord('liegestuetze', 'mostPushups', lgPushupCount, false);
+    showNewRecordBadge('lg-new-record', newRecord);
     showView('tracker-liegestuetze', 'lg-done');
 });
 
@@ -1267,6 +1381,11 @@ function finishWhAll() {
     document.getElementById('wh-stat-rounds').textContent = whTotalRounds;
     const totalRetention = whRoundRetentions.reduce((a, b) => a + b, 0);
     document.getElementById('wh-stat-total-retention').textContent = formatTime(totalRetention);
+    // Save records
+    const longestRetention = whRoundRetentions.length > 0 ? Math.max(...whRoundRetentions) : 0;
+    const newRounds = checkAndSaveRecord('wimhof', 'mostRounds', whTotalRounds, false);
+    const newRetention = checkAndSaveRecord('wimhof', 'longestRetention', longestRetention, false);
+    showNewRecordBadge('wh-new-record', newRounds || newRetention);
     showView('tracker-wimhof', 'wh-done');
 }
 

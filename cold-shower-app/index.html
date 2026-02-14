@@ -25,6 +25,17 @@
         <!-- Subtle vignette -->
         <div class="vignette"></div>
 
+        <button class="records-btn" id="records-btn" title="Rekorde">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5C7 4 7 7 7 7"/>
+                <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5C17 4 17 7 17 7"/>
+                <path d="M4 22h16"/>
+                <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20 7 22"/>
+                <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20 17 22"/>
+                <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
+            </svg>
+        </button>
+
         <div class="menu-container">
             <div class="symbol-row top-row">
                 <div class="symbol-item" id="kaelte-btn">
@@ -164,6 +175,7 @@
         <div id="atmung-done" class="tracker-view hidden">
             <div class="done-icon">&#10003;</div>
             <h2 class="done-title">NAMASTE</h2>
+            <div class="new-record-badge hidden" id="atm-new-record">NEUER REKORD!</div>
             <div class="done-stats">
                 <div class="stat"><span class="stat-label">Atemzüge</span><span class="stat-value" id="atm-stat-breaths">30</span></div>
                 <div class="stat"><span class="stat-label">Retention</span><span class="stat-value" id="atm-stat-retention"></span></div>
@@ -238,6 +250,7 @@
         <div id="lg-done" class="tracker-view hidden">
             <div class="done-icon">&#10003;</div>
             <h2 class="done-title">GESCHAFFT!</h2>
+            <div class="new-record-badge hidden" id="lg-new-record">NEUER REKORD!</div>
             <div class="done-stats">
                 <div class="stat"><span class="stat-label">Atemzüge</span><span class="stat-value" id="lg-stat-breaths">35</span></div>
                 <div class="stat"><span class="stat-label">Liegestütze</span><span class="stat-value" id="lg-stat-pushups"></span></div>
@@ -313,6 +326,7 @@
         <div id="meditation-done" class="tracker-view hidden">
             <div class="done-icon">&#10003;</div>
             <h2 class="done-title">NAMASTE</h2>
+            <div class="new-record-badge hidden" id="med-new-record">NEUER REKORD!</div>
             <div class="done-stats">
                 <div class="stat"><span class="stat-label">Dauer</span><span class="stat-value" id="med-stat-dur"></span></div>
             </div>
@@ -497,6 +511,7 @@
         <div id="wh-done" class="tracker-view hidden">
             <div class="done-icon">&#10003;</div>
             <h2 class="done-title">GESCHAFFT!</h2>
+            <div class="new-record-badge hidden" id="wh-new-record">NEUER REKORD!</div>
             <div class="rounds-summary" id="wh-summary"></div>
             <div class="done-stats">
                 <div class="stat"><span class="stat-label">Runden</span><span class="stat-value" id="wh-stat-rounds"></span></div>
@@ -602,6 +617,7 @@
         <div id="eisdusche-done" class="tracker-view hidden">
             <div class="done-icon">&#10003;</div>
             <h2 class="done-title">GESCHAFFT!</h2>
+            <div class="new-record-badge hidden" id="ed-new-record">NEUER REKORD!</div>
             <div class="done-stats">
                 <div class="stat"><span class="stat-label">Dauer</span><span class="stat-value" id="ed-stat-dur"></span></div>
                 <div class="stat"><span class="stat-label">Temperatur</span><span class="stat-value" id="ed-stat-temp"></span></div>
@@ -661,6 +677,7 @@
         <div id="eisbaden-done" class="tracker-view hidden">
             <div class="done-icon">&#10003;</div>
             <h2 class="done-title">GESCHAFFT!</h2>
+            <div class="new-record-badge hidden" id="eb-new-record">NEUER REKORD!</div>
             <div class="done-stats">
                 <div class="stat"><span class="stat-label">Dauer</span><span class="stat-value" id="eb-stat-dur"></span></div>
                 <div class="stat"><span class="stat-label">Temperatur</span><span class="stat-value" id="eb-stat-temp"></span></div>
@@ -703,6 +720,7 @@
         <div id="rounds-done" class="tracker-view hidden">
             <div class="done-icon">&#10003;</div>
             <h2 class="done-title">GESCHAFFT!</h2>
+            <div class="new-record-badge hidden" id="rounds-new-record">NEUER REKORD!</div>
             <div class="rounds-summary" id="rounds-summary"></div>
             <div class="done-stats">
                 <div class="stat"><span class="stat-label">Runden</span><span class="stat-value" id="rounds-stat-count"></span></div>
@@ -710,6 +728,144 @@
                 <div class="stat"><span class="stat-label">Temperatur</span><span class="stat-value" id="rounds-stat-temp"></span></div>
             </div>
             <button class="start-btn" id="rounds-done-btn">ZURÜCK</button>
+        </div>
+    </div>
+
+    <!-- ===== RECORDS SCREEN ===== -->
+    <div id="records-screen" class="screen">
+        <div class="fog-wrapper">
+            <div class="fog fog-1"></div>
+            <div class="fog fog-2"></div>
+            <div class="fog fog-3"></div>
+        </div>
+        <canvas class="particles-canvas"></canvas>
+        <div class="vignette"></div>
+        <button class="back-btn" id="back-to-main-records">&larr;</button>
+        <div class="records-container">
+            <div class="records-header">
+                <svg class="records-trophy" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#c8a050" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5C7 4 7 7 7 7"/>
+                    <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5C17 4 17 7 17 7"/>
+                    <path d="M4 22h16"/>
+                    <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20 7 22"/>
+                    <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20 17 22"/>
+                    <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
+                </svg>
+                <h1 class="records-title">REKORDE</h1>
+            </div>
+
+            <!-- KÄLTE Section -->
+            <div class="records-section">
+                <div class="records-section-title records-section-ice">KÄLTE</div>
+
+                <div class="record-card">
+                    <div class="record-card-title">Eisdusche</div>
+                    <div class="record-row">
+                        <span class="record-label">Kälteste Temperatur</span>
+                        <span class="record-value" id="rec-eisdusche-temp">--</span>
+                    </div>
+                    <div class="record-row">
+                        <span class="record-label">Längste Zeit</span>
+                        <span class="record-value" id="rec-eisdusche-time">--</span>
+                    </div>
+                </div>
+
+                <div class="record-card">
+                    <div class="record-card-title">Eisbaden</div>
+                    <div class="record-row">
+                        <span class="record-label">Kälteste Temperatur</span>
+                        <span class="record-value" id="rec-eisbaden-temp">--</span>
+                    </div>
+                    <div class="record-row">
+                        <span class="record-label">Längste Zeit</span>
+                        <span class="record-value" id="rec-eisbaden-time">--</span>
+                    </div>
+                </div>
+
+                <div class="record-card">
+                    <div class="record-card-title">Gesicht</div>
+                    <div class="record-row">
+                        <span class="record-label">Kälteste Temperatur</span>
+                        <span class="record-value" id="rec-gesicht-temp">--</span>
+                    </div>
+                    <div class="record-row">
+                        <span class="record-label">Längste Zeit</span>
+                        <span class="record-value" id="rec-gesicht-time">--</span>
+                    </div>
+                </div>
+
+                <div class="record-card">
+                    <div class="record-card-title">Hand</div>
+                    <div class="record-row">
+                        <span class="record-label">Kälteste Temperatur</span>
+                        <span class="record-value" id="rec-hand-temp">--</span>
+                    </div>
+                    <div class="record-row">
+                        <span class="record-label">Längste Zeit</span>
+                        <span class="record-value" id="rec-hand-time">--</span>
+                    </div>
+                </div>
+
+                <div class="record-card">
+                    <div class="record-card-title">Fu&szlig;</div>
+                    <div class="record-row">
+                        <span class="record-label">Kälteste Temperatur</span>
+                        <span class="record-value" id="rec-fuss-temp">--</span>
+                    </div>
+                    <div class="record-row">
+                        <span class="record-label">Längste Zeit</span>
+                        <span class="record-value" id="rec-fuss-time">--</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GEIST Section -->
+            <div class="records-section">
+                <div class="records-section-title records-section-bronze">GEIST</div>
+
+                <div class="record-card record-card-bronze">
+                    <div class="record-card-title">Meditation</div>
+                    <div class="record-row">
+                        <span class="record-label">Längste Sitzung</span>
+                        <span class="record-value" id="rec-meditation-time">--</span>
+                    </div>
+                </div>
+
+                <div class="record-card record-card-bronze">
+                    <div class="record-card-title">Meditations-Atmung</div>
+                    <div class="record-row">
+                        <span class="record-label">Längste Retention</span>
+                        <span class="record-value" id="rec-atmung-retention">--</span>
+                    </div>
+                </div>
+
+                <div class="record-card record-card-bronze">
+                    <div class="record-card-title">Liegestütze</div>
+                    <div class="record-row">
+                        <span class="record-label">Meiste am Stück</span>
+                        <span class="record-value" id="rec-liegestuetze-count">--</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ATEM Section -->
+            <div class="records-section">
+                <div class="records-section-title records-section-bronze">ATEM</div>
+
+                <div class="record-card record-card-bronze">
+                    <div class="record-card-title">Wim Hof Atemtechnik</div>
+                    <div class="record-row">
+                        <span class="record-label">Meiste Runden</span>
+                        <span class="record-value" id="rec-wimhof-rounds">--</span>
+                    </div>
+                    <div class="record-row">
+                        <span class="record-label">Längste Retention</span>
+                        <span class="record-value" id="rec-wimhof-retention">--</span>
+                    </div>
+                </div>
+            </div>
+
+            <button class="start-btn records-reset-btn" id="records-reset">REKORDE ZURÜCKSETZEN</button>
         </div>
     </div>
 
