@@ -698,7 +698,7 @@ document.getElementById('atm-start').addEventListener('click', () => {
 });
 
 // --- Breathing Phase: 30 breaths, Wim Hof rhythm ---
-// ~1.7s inhale, ~1.7s exhale = ~3.4s per cycle
+// ~2.5s inhale, ~1.7s exhale = ~4.2s per cycle
 
 function startBreathingPhase() {
     const img = document.getElementById('atm-breath-img');
@@ -707,7 +707,7 @@ function startBreathingPhase() {
     const instruction = document.getElementById('atm-instruction');
     let breath = 0;
     const totalBreaths = 30;
-    const inhaleMs = 3000;
+    const inhaleMs = 2500;
     const exhaleMs = 1700;
 
     function doInhale() {
@@ -719,6 +719,7 @@ function startBreathingPhase() {
         count.textContent = `${breath} / ${totalBreaths}`;
         phase.textContent = 'EINATMEN';
         instruction.textContent = 'Atme tief ein...';
+        img.style.transition = `transform ${(inhaleMs * 0.9) / 1000}s ease-in-out`;
         img.classList.remove('atm-exhale');
         img.classList.add('atm-inhale');
         if (atmBreathSoundEnabled) { inhaleSound.currentTime = 0; inhaleSound.play().catch(() => {}); }
@@ -731,6 +732,7 @@ function startBreathingPhase() {
     function doExhale() {
         phase.textContent = 'AUSATMEN';
         instruction.textContent = 'Langsam ausatmen...';
+        img.style.transition = `transform ${(exhaleMs * 0.9) / 1000}s ease-in-out`;
         img.classList.remove('atm-inhale');
         img.classList.add('atm-exhale');
         if (atmBreathSoundEnabled) { exhaleSound.currentTime = 0; exhaleSound.play().catch(() => {}); }
@@ -946,7 +948,7 @@ function startLgBreathing() {
     const count = document.getElementById('lg-count');
     const instruction = document.getElementById('lg-instruction');
     let breath = 0;
-    const inhaleMs = 3000;
+    const inhaleMs = 2500;
     const exhaleMs = 1700;
 
     function doInhale() {
@@ -958,6 +960,7 @@ function startLgBreathing() {
         count.textContent = `${breath} / ${lgTotalBreaths}`;
         phase.textContent = 'EINATMEN';
         instruction.textContent = 'Atme tief ein...';
+        img.style.transition = `transform ${(inhaleMs * 0.9) / 1000}s ease-in-out`;
         img.classList.remove('atm-exhale');
         img.classList.add('atm-inhale');
         if (lgBreathSoundEnabled) { inhaleSound.currentTime = 0; inhaleSound.play().catch(() => {}); }
@@ -970,6 +973,7 @@ function startLgBreathing() {
     function doExhale() {
         phase.textContent = 'AUSATMEN';
         instruction.textContent = 'Loslassen...';
+        img.style.transition = `transform ${(exhaleMs * 0.9) / 1000}s ease-in-out`;
         img.classList.remove('atm-inhale');
         img.classList.add('atm-exhale');
         if (lgBreathSoundEnabled) { exhaleSound.currentTime = 0; exhaleSound.play().catch(() => {}); }
@@ -1054,9 +1058,9 @@ let whRecoveryDuration = 15;
 let whPauseDuration = 3;
 
 const whSpeeds = {
-    slow:   { inhale: 4000, exhale: 2500 },
-    medium: { inhale: 3000, exhale: 1700 },
-    fast:   { inhale: 2000, exhale: 1200 },
+    slow:   { inhale: 3500, exhale: 2500 },
+    medium: { inhale: 2500, exhale: 1700 },
+    fast:   { inhale: 1500, exhale: 1200 },
 };
 let whSpeed = 'medium';
 
@@ -1216,6 +1220,7 @@ function startWhBreathing() {
         count.textContent = `${breath} / ${whBreathsPerRound}`;
         phase.textContent = 'EINATMEN';
         instruction.textContent = 'Atme tief ein...';
+        img.style.transition = `transform ${(speed.inhale * 0.9) / 1000}s ease-in-out`;
         img.classList.remove('atm-exhale');
         img.classList.add('atm-inhale');
         if (whBreathSoundEnabled) { inhaleSound.currentTime = 0; inhaleSound.play().catch(() => {}); }
@@ -1228,6 +1233,7 @@ function startWhBreathing() {
     function doExhale() {
         phase.textContent = 'AUSATMEN';
         instruction.textContent = 'Langsam ausatmen...';
+        img.style.transition = `transform ${(speed.exhale * 0.9) / 1000}s ease-in-out`;
         img.classList.remove('atm-inhale');
         img.classList.add('atm-exhale');
         if (whBreathSoundEnabled) { exhaleSound.currentTime = 0; exhaleSound.play().catch(() => {}); }
