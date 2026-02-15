@@ -1,3 +1,20 @@
+// ===== AUDIO VOLUME CONFIGURATION =====
+
+const MUSIC_VOLUME = 0.75;
+const VOICE_GAIN = 1.25;
+
+let _audioCtx = null;
+function boostVoiceClip(audio) {
+    try {
+        if (!_audioCtx) _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const src = _audioCtx.createMediaElementSource(audio);
+        const gain = _audioCtx.createGain();
+        gain.gain.value = VOICE_GAIN;
+        src.connect(gain);
+        gain.connect(_audioCtx.destination);
+    } catch(e) {}
+}
+
 // ===== SOUNDS =====
 
 const clickSound = new Audio('Klick.mp3');
@@ -6,6 +23,7 @@ clickSound.preload = 'auto';
 gongSound.preload = 'auto';
 
 function playClick() {
+    if (_audioCtx && _audioCtx.state === 'suspended') _audioCtx.resume();
     clickSound.currentTime = 0;
     clickSound.play().catch(() => {});
 }
@@ -263,7 +281,7 @@ function createCountdownTracker(prefix, screenId, activityLabel) {
         const newTemp = checkAndSaveRecord(category, 'coldestTemp', temp, true);
         const newTime = checkAndSaveRecord(category, 'longestTime', duration, false);
         showNewRecordBadge(`${prefix}-new-record`, newTemp || newTime);
-        showView(screenId, `${prefix.replace('-', '')}-done`);
+        showView(screenId, `${setupId}-done`);
     }
 
     function stop() {
@@ -440,7 +458,7 @@ const medFocusVoices = [
     new Audio('spüre deinen Atem.mp3'),
     new Audio('Bleibe bei deinem Atem.mp3'),
 ];
-medFocusVoices.forEach(a => a.preload = 'auto');
+medFocusVoices.forEach(a => { a.preload = 'auto'; boostVoiceClip(a); });
 
 // Music toggle
 const musicToggle = document.getElementById('med-music-toggle');
@@ -494,6 +512,7 @@ document.getElementById('med-start').addEventListener('click', () => {
     // Start music if enabled and selected
     if (musicEnabled && selectedMusicSrc) {
         medMusic = new Audio(selectedMusicSrc);
+        medMusic.volume = MUSIC_VOLUME;
         medMusic.loop = true;
         medMusic.play().catch(() => {});
     }
@@ -624,7 +643,7 @@ const voiceEin = new Audio('ein.mp3');
 const voiceAus = new Audio('aus.mp3');
 const voiceUndAus = new Audio('und aus.mp3');
 const voiceFolge = new Audio('Folge dem Fluss deines atems ohne Pause dazwischen.mp3');
-[voiceAtmeEin, voiceAusatmen, voiceEinatmen, voiceEin, voiceAus, voiceUndAus, voiceFolge].forEach(a => a.preload = 'auto');
+[voiceAtmeEin, voiceAusatmen, voiceEinatmen, voiceEin, voiceAus, voiceUndAus, voiceFolge].forEach(a => { a.preload = 'auto'; boostVoiceClip(a); });
 
 function playVoice(audio) {
     if (!atmVoiceEnabled) return;
@@ -670,6 +689,7 @@ document.getElementById('atm-start').addEventListener('click', () => {
     // Start music
     if (atmMusicEnabled && atmSelectedSrc) {
         atmMusic = new Audio(atmSelectedSrc);
+        atmMusic.volume = MUSIC_VOLUME;
         atmMusic.loop = true;
         atmMusic.play().catch(() => {});
     }
@@ -736,7 +756,7 @@ const voiceVierMinuten = new Audio('vier Minuten.mp3');
 const voiceFuenfMinuten = new Audio('fünf Minuten.mp3');
 [voiceHalteAtem, voiceKribbeln, voiceSeiEinfach, voiceHerzschlag,
  voiceEineMinute, voiceZweiMinuten, voiceDreiMinuten, voiceVierMinuten, voiceFuenfMinuten
-].forEach(a => a.preload = 'auto');
+].forEach(a => { a.preload = 'auto'; boostVoiceClip(a); });
 
 const retentionRandomClips = [voiceKribbeln, voiceSeiEinfach, voiceHerzschlag];
 const retentionMinuteClips = {
@@ -1160,6 +1180,7 @@ document.getElementById('wh-start').addEventListener('click', () => {
     // Start music
     if (whMusicEnabled && whSelectedSrc) {
         whMusic = new Audio(whSelectedSrc);
+        whMusic.volume = MUSIC_VOLUME;
         whMusic.loop = true;
         whMusic.play().catch(() => {});
     }
@@ -1283,7 +1304,7 @@ const voiceCountdown = {
 };
 [voiceAtmeTiefEin, voiceAusatmen10, voiceJetzt,
  voiceCountdown[5], voiceCountdown[4], voiceCountdown[3], voiceCountdown[2], voiceCountdown[1]
-].forEach(a => a.preload = 'auto');
+].forEach(a => { a.preload = 'auto'; boostVoiceClip(a); });
 
 function startWhRecovery() {
     showView('tracker-wimhof', 'wh-recovery');
@@ -1482,6 +1503,27 @@ function stopAllTimers() {
         });
     });
 })();
+
+// ===== WAKE LOCK (Display bleibt an) =====
+
+let wakeLock = null;
+
+async function requestWakeLock() {
+    if (!('wakeLock' in navigator)) return;
+    try {
+        wakeLock = await navigator.wakeLock.request('screen');
+        wakeLock.addEventListener('release', () => { wakeLock = null; });
+    } catch(e) {}
+}
+
+requestWakeLock();
+
+document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+        requestWakeLock();
+        if (_audioCtx && _audioCtx.state === 'suspended') _audioCtx.resume();
+    }
+});
 
 // ===== SERVICE WORKER =====
 
