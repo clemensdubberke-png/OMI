@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cold-shower-v35';
+const CACHE_NAME = 'cold-shower-v36';
 const ASSETS = [
     './',
     './index.html',
@@ -48,6 +48,7 @@ const ASSETS = [
     './vier Minuten.mp3',
     './fünf Minuten.mp3',
     './Atem Trance .mp3',
+    './Mystic Drums.mp3',
     './Atme tief ein und halte deinen Atem an.mp3',
     './Ausatmen in 10 Sekunden.mp3',
     './Jetzt.mp3',
