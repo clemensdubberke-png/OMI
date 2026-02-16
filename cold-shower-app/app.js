@@ -708,7 +708,7 @@ function startBreathingPhase() {
     let breath = 0;
     const totalBreaths = 30;
     const inhaleMs = 2000;
-    const exhaleMs = 1700;
+    const exhaleMs = 1000;
 
     function doInhale() {
         breath++;
@@ -958,7 +958,7 @@ function startLgBreathing() {
     const instruction = document.getElementById('lg-instruction');
     let breath = 0;
     const inhaleMs = 2000;
-    const exhaleMs = 1700;
+    const exhaleMs = 1000;
 
     function doInhale() {
         breath++;
@@ -1067,9 +1067,9 @@ let whRecoveryDuration = 15;
 let whPauseDuration = 3;
 
 const whSpeeds = {
-    slow:   { inhale: 2700, exhale: 2500 },
-    medium: { inhale: 2000, exhale: 1700 },
-    fast:   { inhale: 1300, exhale: 1200 },
+    slow:   { inhale: 2700, exhale: 1500 },
+    medium: { inhale: 2000, exhale: 1000 },
+    fast:   { inhale: 1300, exhale: 700 },
 };
 let whSpeed = 'medium';
 
