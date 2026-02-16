@@ -807,11 +807,20 @@ function startRetentionPhase() {
     }
 }
 
-document.getElementById('atm-breathe-in').addEventListener('click', () => {
-    playClick();
-    if (atmInterval) { clearInterval(atmInterval); atmInterval = null; }
-    if (retentionVoiceInterval) { clearInterval(retentionVoiceInterval); retentionVoiceInterval = null; }
-    startRecoveryPhase();
+// Double-tap to end retention (same as Wim Hof)
+let atmLastTap = 0;
+document.getElementById('atmung-retention').addEventListener('click', (e) => {
+    const now = Date.now();
+    if (now - atmLastTap < 400) {
+        // Double-tap detected
+        playClick();
+        if (atmInterval) { clearInterval(atmInterval); atmInterval = null; }
+        if (retentionVoiceInterval) { clearInterval(retentionVoiceInterval); retentionVoiceInterval = null; }
+        atmLastTap = 0;
+        startRecoveryPhase();
+    } else {
+        atmLastTap = now;
+    }
 });
 
 // --- Recovery Breath: inhale and hold 15s ---
