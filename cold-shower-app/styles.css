@@ -513,7 +513,7 @@ html, body {
     height: 140px;
     object-fit: cover;
     border-radius: 50%;
-    transition: transform 1.8s ease-in-out;
+    transition: transform 1.35s ease-in-out;
     box-shadow: 0 0 30px rgba(200, 160, 80, 0.3);
 }
 
