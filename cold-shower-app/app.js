@@ -698,7 +698,7 @@ document.getElementById('atm-start').addEventListener('click', () => {
 });
 
 // --- Breathing Phase: 30 breaths, Wim Hof rhythm ---
-// ~1.5s inhale, ~1s exhale = ~2.5s per cycle
+// ~0.9s inhale, ~0.6s exhale = ~1.5s per cycle
 
 function startBreathingPhase() {
     const img = document.getElementById('atm-breath-img');
@@ -707,8 +707,8 @@ function startBreathingPhase() {
     const instruction = document.getElementById('atm-instruction');
     let breath = 0;
     const totalBreaths = 30;
-    const inhaleMs = 1500;
-    const exhaleMs = 1000;
+    const inhaleMs = 900;
+    const exhaleMs = 600;
 
     function doInhale() {
         breath++;
@@ -957,8 +957,8 @@ function startLgBreathing() {
     const count = document.getElementById('lg-count');
     const instruction = document.getElementById('lg-instruction');
     let breath = 0;
-    const inhaleMs = 1500;
-    const exhaleMs = 1000;
+    const inhaleMs = 900;
+    const exhaleMs = 600;
 
     function doInhale() {
         breath++;
@@ -1067,9 +1067,9 @@ let whRecoveryDuration = 15;
 let whPauseDuration = 3;
 
 const whSpeeds = {
-    slow:   { inhale: 2200, exhale: 1500 },
-    medium: { inhale: 1500, exhale: 1000 },
-    fast:   { inhale: 900,  exhale: 700 },
+    slow:   { inhale: 1300, exhale: 900 },
+    medium: { inhale: 900,  exhale: 600 },
+    fast:   { inhale: 550,  exhale: 400 },
 };
 let whSpeed = 'medium';
 

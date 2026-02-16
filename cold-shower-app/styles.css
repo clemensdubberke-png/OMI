@@ -513,7 +513,7 @@ html, body {
     height: 140px;
     object-fit: cover;
     border-radius: 50%;
-    transition: transform 1.35s ease-in-out;
+    transition: transform 0.8s ease-in-out;
     box-shadow: 0 0 30px rgba(200, 160, 80, 0.3);
 }
 
@@ -852,15 +852,20 @@ html, body {
     background: rgba(200, 160, 80, 0.15);
     border: 1px solid rgba(200, 160, 80, 0.3);
     color: #c8a050;
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
+    height: 40px;
+    padding: 0 16px;
+    gap: 8px;
+    border-radius: 20px;
     cursor: pointer;
     z-index: 10;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: background 0.2s, transform 0.2s;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    font-family: inherit;
 }
 
 .records-btn:active {
