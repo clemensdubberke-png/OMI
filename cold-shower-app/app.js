@@ -1543,5 +1543,15 @@ document.addEventListener('visibilitychange', () => {
 // ===== SERVICE WORKER =====
 
 if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js').catch(() => {});
+    // Unregister any foreign service workers from other scopes
+    navigator.serviceWorker.getRegistrations().then(registrations => {
+        for (const reg of registrations) {
+            const swUrl = reg.active ? reg.active.scriptURL : '';
+            if (!swUrl.includes('cold-shower-app/sw.js')) {
+                reg.unregister();
+            }
+        }
+    });
+    // Register our own SW with explicit scope
+    navigator.serviceWorker.register('./sw.js', { scope: './' }).catch(() => {});
 }
