@@ -3,7 +3,8 @@
    Offline-Caching für vollständige Nutzung
    ======================================== */
 
-const CACHE_NAME = 'stark-bleiben-v1';
+const CACHE_PREFIX = 'stark-bleiben-';
+const CACHE_NAME = CACHE_PREFIX + 'v2';
 const ASSETS = [
   './',
   './index.html',
@@ -24,13 +25,13 @@ self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
 
-// Activate: Alte Caches entfernen
+// Activate: Nur EIGENE alte Caches entfernen (nicht die anderer Apps)
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
         keys
-          .filter((key) => key !== CACHE_NAME)
+          .filter((key) => key.startsWith(CACHE_PREFIX) && key !== CACHE_NAME)
           .map((key) => caches.delete(key))
       );
     })

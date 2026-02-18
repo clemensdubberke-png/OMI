@@ -1,7 +1,8 @@
 // Service Worker for Ameisen Simulator
 // Enables offline functionality
 
-const CACHE_NAME = 'ameisen-sim-v1';
+const CACHE_PREFIX = 'ameisen-sim-';
+const CACHE_NAME = CACHE_PREFIX + 'v2';
 const ASSETS_TO_CACHE = [
     './',
     './index.html',
@@ -31,12 +32,13 @@ self.addEventListener('install', event => {
     self.skipWaiting();
 });
 
-// Activate: clean up old caches
+// Activate: clean up only OUR old caches (not other apps' caches)
 self.addEventListener('activate', event => {
     event.waitUntil(
         caches.keys().then(keys =>
             Promise.all(
-                keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
+                keys.filter(k => k.startsWith(CACHE_PREFIX) && k !== CACHE_NAME)
+                    .map(k => caches.delete(k))
             )
         )
     );
