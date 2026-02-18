@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#2d5a1b">
+    <title>Ameisen Simulator</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
+    <script>
+    // Clean up only SWs that interfere with THIS app (wrong scope covering our path)
+    (function() {
+        if (!('serviceWorker' in navigator)) return;
+        var myPath = location.pathname;
+        navigator.serviceWorker.getRegistrations().then(function(regs) {
+            var hadForeign = false;
+            regs.forEach(function(reg) {
+                var sw = reg.active || reg.installing || reg.waiting;
+                var url = sw ? sw.scriptURL : '';
+                var scope = new URL(reg.scope).pathname;
+                // Only remove SWs that: 1) cover our path AND 2) are not ours
+                var coversUs = myPath.startsWith(scope);
+                var isOurs = url.includes('ant-simulator/sw.js');
+                if (coversUs && !isOurs) {
+                    reg.unregister();
+                    hadForeign = true;
+                }
+            });
+            if (hadForeign) {
+                location.reload();
+            }
+        });
+    })();
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #000;
+            touch-action: none;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #1a3a0a;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            font-family: monospace;
+            color: #8fbe5a;
+            transition: opacity 0.5s ease;
+        }
+
+        #loading-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #loading-screen h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 0 #0a1a04;
+        }
+
+        .loading-bar {
+            width: 200px;
+            height: 16px;
+            border: 2px solid #8fbe5a;
+            padding: 2px;
+        }
+
+        .loading-bar-inner {
+            height: 100%;
+            background: #8fbe5a;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        #loading-text {
+            margin-top: 10px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div id="loading-screen">
+        <h1>Ameisen Simulator</h1>
+        <div class="loading-bar">
+            <div class="loading-bar-inner" id="loading-bar-inner"></div>
+        </div>
+        <div id="loading-text">Lade Grafiken...</div>
+    </div>
+    <canvas id="gameCanvas"></canvas>
+    <script src="game.js"></script>
+</body>
+</html>

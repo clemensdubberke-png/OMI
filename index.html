@@ -1,36 +1,81 @@
 <!DOCTYPE html>
-<html>
+<html lang="de">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OMI Apps</title>
     <script>
-    // Clean up ALL service workers at root scope before redirecting
+    // Clean up any service workers registered at ROOT scope.
+    // Each app has its own SW in its own subdirectory - root-level SWs are always foreign.
     (function() {
-        if (!('serviceWorker' in navigator)) { location.href = 'cold-shower-app/'; return; }
+        if (!('serviceWorker' in navigator)) return;
         navigator.serviceWorker.getRegistrations().then(function(regs) {
-            var tasks = [];
             regs.forEach(function(reg) {
-                var sw = reg.active || reg.installing || reg.waiting;
-                var url = sw ? sw.scriptURL : '';
-                // Only keep cold-shower-app's own SW
-                if (!url.includes('cold-shower-app/sw.js')) {
-                    tasks.push(reg.unregister());
+                // Only unregister SWs at root scope (not inside app subdirectories)
+                // Root scope SWs interfere with all apps
+                if (reg.scope === location.origin + '/' || reg.scope === location.origin) {
+                    reg.unregister();
                 }
-            });
-            // Clear foreign caches
-            caches.keys().then(function(keys) {
-                keys.forEach(function(k) {
-                    if (!k.startsWith('cold-shower-')) caches.delete(k);
-                });
-            });
-            Promise.all(tasks).then(function() {
-                location.href = 'cold-shower-app/';
             });
         });
     })();
     </script>
-    <meta http-equiv="refresh" content="2; url=cold-shower-app/">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #1a1a2e;
+            color: #eee;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+        }
+        h1 { margin-bottom: 30px; font-size: 28px; }
+        .apps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            max-width: 800px;
+            width: 100%;
+        }
+        .app-card {
+            background: #16213e;
+            border-radius: 12px;
+            padding: 24px;
+            text-decoration: none;
+            color: #eee;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid #0f3460;
+        }
+        .app-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+        }
+        .app-card h2 { font-size: 20px; margin-bottom: 8px; }
+        .app-card p { font-size: 14px; color: #aaa; }
+        .emoji { font-size: 36px; margin-bottom: 12px; display: block; }
+    </style>
 </head>
 <body>
-    <a href="cold-shower-app/">Weiter zur App</a>
+    <h1>OMI Apps</h1>
+    <div class="apps">
+        <a class="app-card" href="ant-simulator/">
+            <span class="emoji">&#x1F41C;</span>
+            <h2>Ameisen Simulator</h2>
+            <p>2D Ameisen Simulator im Pixel Art Stil</p>
+        </a>
+        <a class="app-card" href="cold-shower-app/">
+            <span class="emoji">&#x1F6BF;</span>
+            <h2>Cold Shower Tracker</h2>
+            <p>Kalte Dusche Tracker App</p>
+        </a>
+        <a class="app-card" href="pwa-addiction-support/">
+            <span class="emoji">&#x1F4AA;</span>
+            <h2>Stark Bleiben</h2>
+            <p>PWA Suchtbew&auml;ltigungs-App</p>
+        </a>
+    </div>
 </body>
 </html>

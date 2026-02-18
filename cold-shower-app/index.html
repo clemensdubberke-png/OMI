@@ -9,28 +9,26 @@
     <title>Cold Shower Tracker</title>
     <link rel="manifest" href="manifest.json">
     <script>
-    // Immediately clean up foreign service workers & caches before anything loads
+    // Clean up only SWs that interfere with THIS app (wrong scope covering our path)
     (function() {
         if (!('serviceWorker' in navigator)) return;
+        var myPath = location.pathname;
         navigator.serviceWorker.getRegistrations().then(function(regs) {
             var hadForeign = false;
             regs.forEach(function(reg) {
                 var sw = reg.active || reg.installing || reg.waiting;
                 var url = sw ? sw.scriptURL : '';
-                if (!url.includes('cold-shower-app/sw.js')) {
+                var scope = new URL(reg.scope).pathname;
+                // Only remove SWs that: 1) cover our path AND 2) are not ours
+                var coversUs = myPath.startsWith(scope);
+                var isOurs = url.includes('cold-shower-app/sw.js');
+                if (coversUs && !isOurs) {
                     reg.unregister();
                     hadForeign = true;
                 }
             });
             if (hadForeign) {
-                // Clear all caches that don't belong to us
-                caches.keys().then(function(keys) {
-                    keys.forEach(function(k) {
-                        if (!k.startsWith('cold-shower-')) caches.delete(k);
-                    });
-                    // Reload to get fresh resources now that foreign SW is gone
-                    location.reload();
-                });
+                location.reload();
             }
         });
     })();
