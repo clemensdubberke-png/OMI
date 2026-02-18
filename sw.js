@@ -1,5 +1,4 @@
-const CACHE_PREFIX = 'cold-shower-';
-const CACHE_NAME = CACHE_PREFIX + 'v40';
+const CACHE_NAME = 'cold-shower-v41';
 const ASSETS = [
     './',
     './index.html',
@@ -71,8 +70,7 @@ self.addEventListener('activate', event => {
     event.waitUntil(
         caches.keys().then(keys =>
             Promise.all(
-                keys.filter(k => k.startsWith(CACHE_PREFIX) && k !== CACHE_NAME)
-                    .map(k => caches.delete(k))
+                keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
             )
         )
     );

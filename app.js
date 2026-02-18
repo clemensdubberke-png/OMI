@@ -1543,17 +1543,5 @@ document.addEventListener('visibilitychange', () => {
 // ===== SERVICE WORKER =====
 
 if ('serviceWorker' in navigator) {
-    // Only remove SWs whose scope covers our path but aren't ours
-    navigator.serviceWorker.getRegistrations().then(registrations => {
-        const myPath = location.pathname;
-        for (const reg of registrations) {
-            const swUrl = (reg.active || reg.installing || reg.waiting)?.scriptURL || '';
-            const scope = new URL(reg.scope).pathname;
-            if (myPath.startsWith(scope) && !swUrl.includes('cold-shower-app/sw.js')) {
-                reg.unregister();
-            }
-        }
-    });
-    // Register our own SW with explicit scope
-    navigator.serviceWorker.register('./sw.js', { scope: './' }).catch(() => {});
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
 }
