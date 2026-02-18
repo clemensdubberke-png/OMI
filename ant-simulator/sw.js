@@ -2,7 +2,7 @@
 // Enables offline functionality
 
 const CACHE_PREFIX = 'ameisen-sim-';
-const CACHE_NAME = CACHE_PREFIX + 'v2';
+const CACHE_NAME = CACHE_PREFIX + 'v3';
 const ASSETS_TO_CACHE = [
     './',
     './index.html',
@@ -45,26 +45,23 @@ self.addEventListener('activate', event => {
     self.clients.claim();
 });
 
-// Fetch: serve from cache first, fall back to network
+// Fetch: serve from OUR cache only, fall back to network
 self.addEventListener('fetch', event => {
     event.respondWith(
-        caches.match(event.request).then(cached => {
-            if (cached) return cached;
-            return fetch(event.request).then(response => {
-                // Cache new successful requests
-                if (response.ok) {
-                    const clone = response.clone();
-                    caches.open(CACHE_NAME).then(cache => {
-                        cache.put(event.request, clone);
-                    });
-                }
-                return response;
-            }).catch(() => {
-                // Offline fallback for HTML pages
-                if (event.request.headers.get('accept').includes('text/html')) {
-                    return caches.match('./index.html');
-                }
-            });
-        })
+        caches.open(CACHE_NAME).then(cache =>
+            cache.match(event.request).then(cached => {
+                if (cached) return cached;
+                return fetch(event.request).then(response => {
+                    if (response.ok) {
+                        cache.put(event.request, response.clone());
+                    }
+                    return response;
+                }).catch(() => {
+                    if (event.request.headers.get('accept').includes('text/html')) {
+                        return cache.match('./index.html');
+                    }
+                });
+            })
+        )
     );
 });

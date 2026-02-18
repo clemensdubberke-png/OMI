@@ -3,6 +3,8 @@
   "short_name": "StarkBleiben",
   "description": "Unterstützung in schwierigen Momenten — Bleib stark.",
   "start_url": "./index.html",
+  "scope": "./",
+  "id": "stark-bleiben",
   "display": "standalone",
   "background_color": "#f5f6fa",
   "theme_color": "#2c3e50",

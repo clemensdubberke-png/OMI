@@ -4,7 +4,7 @@
    ======================================== */
 
 const CACHE_PREFIX = 'stark-bleiben-';
-const CACHE_NAME = CACHE_PREFIX + 'v2';
+const CACHE_NAME = CACHE_PREFIX + 'v3';
 const ASSETS = [
   './',
   './index.html',
@@ -39,23 +39,21 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Fetch: Cache-first Strategie
+// Fetch: Cache-first Strategie (nur EIGENEN Cache durchsuchen)
 self.addEventListener('fetch', (event) => {
   event.respondWith(
-    caches.match(event.request).then((cached) => {
-      return cached || fetch(event.request).then((response) => {
-        // Dynamisch cachen
-        const clone = response.clone();
-        caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, clone);
+    caches.open(CACHE_NAME).then((cache) =>
+      cache.match(event.request).then((cached) => {
+        if (cached) return cached;
+        return fetch(event.request).then((response) => {
+          cache.put(event.request, response.clone());
+          return response;
         });
-        return response;
-      });
-    }).catch(() => {
-      // Offline fallback
-      if (event.request.destination === 'document') {
-        return caches.match('./index.html');
-      }
-    })
+      }).catch(() => {
+        if (event.request.destination === 'document') {
+          return cache.match('./index.html');
+        }
+      })
+    )
   );
 });
