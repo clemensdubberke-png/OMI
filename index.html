@@ -1,7 +1,34 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta http-equiv="refresh" content="0; url=cold-shower-app/">
+    <meta charset="UTF-8">
+    <script>
+    // Clean up ALL service workers at root scope before redirecting
+    (function() {
+        if (!('serviceWorker' in navigator)) { location.href = 'cold-shower-app/'; return; }
+        navigator.serviceWorker.getRegistrations().then(function(regs) {
+            var tasks = [];
+            regs.forEach(function(reg) {
+                var sw = reg.active || reg.installing || reg.waiting;
+                var url = sw ? sw.scriptURL : '';
+                // Only keep cold-shower-app's own SW
+                if (!url.includes('cold-shower-app/sw.js')) {
+                    tasks.push(reg.unregister());
+                }
+            });
+            // Clear foreign caches
+            caches.keys().then(function(keys) {
+                keys.forEach(function(k) {
+                    if (!k.startsWith('cold-shower-')) caches.delete(k);
+                });
+            });
+            Promise.all(tasks).then(function() {
+                location.href = 'cold-shower-app/';
+            });
+        });
+    })();
+    </script>
+    <meta http-equiv="refresh" content="2; url=cold-shower-app/">
 </head>
 <body>
     <a href="cold-shower-app/">Weiter zur App</a>
