@@ -596,7 +596,7 @@ let atmMusic = null;
 let atmMusicEnabled = false;
 let atmSelectedSrc = '';
 let atmRetentionSeconds = 0;
-let atmMeditationVoiceTimeout = null;
+let atmMeditationVoiceTimeouts = [];
 let atmMeditationSeconds = 0;
 let atmBreathSoundEnabled = false;
 const inhaleSound = new Audio('Einatmung.mp3');
@@ -884,23 +884,26 @@ function finishAtmung() {
 function startMeditationPhase() {
     showView('tracker-atmung', 'atmung-meditation');
     atmMeditationSeconds = 0;
+    atmMeditationVoiceTimeouts = [];
     document.getElementById('atm-meditation-display').textContent = '0:00';
 
-    // Play "meditiere jetzt"
-    if (atmVoiceEnabled) {
-        if (_audioCtx && _audioCtx.state === 'suspended') _audioCtx.resume();
-        voiceMeditiereJetzt.currentTime = 0;
-        voiceMeditiereJetzt.play().catch(() => {});
-    }
+    // 5 seconds after "Jetzt": play "meditiere jetzt"
+    atmMeditationVoiceTimeouts.push(setTimeout(() => {
+        if (atmVoiceEnabled) {
+            if (_audioCtx && _audioCtx.state === 'suspended') _audioCtx.resume();
+            voiceMeditiereJetzt.currentTime = 0;
+            voiceMeditiereJetzt.play().catch(() => {});
+        }
+    }, 5000));
 
-    // Play "kurz oder lang" after 15 seconds
-    atmMeditationVoiceTimeout = setTimeout(() => {
+    // 20 seconds after "meditiere jetzt" (= 25s total): play "kurz oder lang"
+    atmMeditationVoiceTimeouts.push(setTimeout(() => {
         if (atmVoiceEnabled) {
             if (_audioCtx && _audioCtx.state === 'suspended') _audioCtx.resume();
             voiceKurzOderLang.currentTime = 0;
             voiceKurzOderLang.play().catch(() => {});
         }
-    }, 15000);
+    }, 25000));
 
     // Timer counting up
     atmInterval = setInterval(() => {
@@ -914,7 +917,8 @@ document.getElementById('atm-meditation-stop').addEventListener('click', () => {
 
     // Stop meditation timer
     if (atmInterval) { clearInterval(atmInterval); atmInterval = null; }
-    if (atmMeditationVoiceTimeout) { clearTimeout(atmMeditationVoiceTimeout); atmMeditationVoiceTimeout = null; }
+    atmMeditationVoiceTimeouts.forEach(t => clearTimeout(t));
+    atmMeditationVoiceTimeouts = [];
 
     // Show meditation duration in done screen
     document.getElementById('atm-stat-meditation').textContent = formatTime(atmMeditationSeconds);
@@ -947,7 +951,8 @@ document.getElementById('atm-done').addEventListener('click', () => {
 function stopAtmung() {
     if (atmInterval) { clearTimeout(atmInterval); clearInterval(atmInterval); atmInterval = null; }
     if (retentionVoiceInterval) { clearInterval(retentionVoiceInterval); retentionVoiceInterval = null; }
-    if (atmMeditationVoiceTimeout) { clearTimeout(atmMeditationVoiceTimeout); atmMeditationVoiceTimeout = null; }
+    atmMeditationVoiceTimeouts.forEach(t => clearTimeout(t));
+    atmMeditationVoiceTimeouts = [];
     if (atmMusic) { atmMusic.pause(); atmMusic = null; }
 }
 
