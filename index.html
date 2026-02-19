@@ -172,6 +172,16 @@
             </div>
             <div class="atm-instruction">Tief einatmen und halten.</div>
         </div>
+        <!-- Meditation Timer -->
+        <div id="atmung-meditation" class="tracker-view hidden">
+            <div class="timer-phase">MEDITATION</div>
+            <div class="timer-display" id="atm-meditation-display">0:00</div>
+            <div class="atm-image-container">
+                <img src="meditation.jpg" alt="" class="atm-breath-img atm-small">
+            </div>
+            <div class="atm-instruction">Lass dich in die Stille sinken.</div>
+            <button class="start-btn" id="atm-meditation-stop">BEENDEN</button>
+        </div>
         <!-- Done -->
         <div id="atmung-done" class="tracker-view hidden">
             <div class="done-icon">&#10003;</div>
@@ -180,6 +190,7 @@
             <div class="done-stats">
                 <div class="stat"><span class="stat-label">Atemzüge</span><span class="stat-value" id="atm-stat-breaths">30</span></div>
                 <div class="stat"><span class="stat-label">Retention</span><span class="stat-value" id="atm-stat-retention"></span></div>
+                <div class="stat"><span class="stat-label">Meditation</span><span class="stat-value" id="atm-stat-meditation"></span></div>
             </div>
             <div class="atm-instruction" style="margin-top:10px;">Fühle dich geistig erfrischt und zurückgesetzt.</div>
             <button class="start-btn" id="atm-done">ZURÜCK</button>

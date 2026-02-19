@@ -596,6 +596,8 @@ let atmMusic = null;
 let atmMusicEnabled = false;
 let atmSelectedSrc = '';
 let atmRetentionSeconds = 0;
+let atmMeditationVoiceTimeout = null;
+let atmMeditationSeconds = 0;
 let atmBreathSoundEnabled = false;
 const inhaleSound = new Audio('Einatmung.mp3');
 const exhaleSound = new Audio('Ausatmung.mp3');
@@ -643,7 +645,9 @@ const voiceEin = new Audio('ein.mp3');
 const voiceAus = new Audio('aus.mp3');
 const voiceUndAus = new Audio('und aus.mp3');
 const voiceFolge = new Audio('Folge dem Fluss deines atems ohne Pause dazwischen.mp3');
-[voiceAtmeEin, voiceAusatmen, voiceEinatmen, voiceEin, voiceAus, voiceUndAus, voiceFolge].forEach(a => { a.preload = 'auto'; boostVoiceClip(a); });
+const voiceMeditiereJetzt = new Audio('meditiere jetzt.mp3');
+const voiceKurzOderLang = new Audio('kurz oder lang.mp3');
+[voiceAtmeEin, voiceAusatmen, voiceEinatmen, voiceEin, voiceAus, voiceUndAus, voiceFolge, voiceMeditiereJetzt, voiceKurzOderLang].forEach(a => { a.preload = 'auto'; boostVoiceClip(a); });
 
 function playVoice(audio) {
     if (!atmVoiceEnabled) return;
@@ -868,6 +872,53 @@ function startRecoveryPhase() {
 }
 
 function finishAtmung() {
+    // Save retention stats (for done screen later)
+    document.getElementById('atm-stat-retention').textContent = formatTime(atmRetentionSeconds);
+    const newRecord = checkAndSaveRecord('atmung', 'longestRetention', atmRetentionSeconds, false);
+    showNewRecordBadge('atm-new-record', newRecord);
+
+    // Start meditation phase instead of showing done screen
+    startMeditationPhase();
+}
+
+function startMeditationPhase() {
+    showView('tracker-atmung', 'atmung-meditation');
+    atmMeditationSeconds = 0;
+    document.getElementById('atm-meditation-display').textContent = '0:00';
+
+    // Play "meditiere jetzt"
+    if (atmVoiceEnabled) {
+        if (_audioCtx && _audioCtx.state === 'suspended') _audioCtx.resume();
+        voiceMeditiereJetzt.currentTime = 0;
+        voiceMeditiereJetzt.play().catch(() => {});
+    }
+
+    // Play "kurz oder lang" after 15 seconds
+    atmMeditationVoiceTimeout = setTimeout(() => {
+        if (atmVoiceEnabled) {
+            if (_audioCtx && _audioCtx.state === 'suspended') _audioCtx.resume();
+            voiceKurzOderLang.currentTime = 0;
+            voiceKurzOderLang.play().catch(() => {});
+        }
+    }, 15000);
+
+    // Timer counting up
+    atmInterval = setInterval(() => {
+        atmMeditationSeconds++;
+        document.getElementById('atm-meditation-display').textContent = formatTime(atmMeditationSeconds);
+    }, 1000);
+}
+
+document.getElementById('atm-meditation-stop').addEventListener('click', () => {
+    playClick();
+
+    // Stop meditation timer
+    if (atmInterval) { clearInterval(atmInterval); atmInterval = null; }
+    if (atmMeditationVoiceTimeout) { clearTimeout(atmMeditationVoiceTimeout); atmMeditationVoiceTimeout = null; }
+
+    // Show meditation duration in done screen
+    document.getElementById('atm-stat-meditation').textContent = formatTime(atmMeditationSeconds);
+
     // Fade out music
     if (atmMusic) {
         let vol = atmMusic.volume;
@@ -882,14 +933,11 @@ function finishAtmung() {
             }
         }, 150);
     }
+
     playGong();
     if (navigator.vibrate) navigator.vibrate([500, 200, 500]);
-    document.getElementById('atm-stat-retention').textContent = formatTime(atmRetentionSeconds);
-    // Save records
-    const newRecord = checkAndSaveRecord('atmung', 'longestRetention', atmRetentionSeconds, false);
-    showNewRecordBadge('atm-new-record', newRecord);
     showView('tracker-atmung', 'atmung-done');
-}
+});
 
 document.getElementById('atm-done').addEventListener('click', () => {
     playClick();
@@ -899,6 +947,7 @@ document.getElementById('atm-done').addEventListener('click', () => {
 function stopAtmung() {
     if (atmInterval) { clearTimeout(atmInterval); clearInterval(atmInterval); atmInterval = null; }
     if (retentionVoiceInterval) { clearInterval(retentionVoiceInterval); retentionVoiceInterval = null; }
+    if (atmMeditationVoiceTimeout) { clearTimeout(atmMeditationVoiceTimeout); atmMeditationVoiceTimeout = null; }
     if (atmMusic) { atmMusic.pause(); atmMusic = null; }
 }
 
