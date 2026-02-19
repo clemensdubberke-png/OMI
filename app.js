@@ -788,6 +788,7 @@ function startRetentionPhase() {
 
         // Voice at minute marks
         if (atmVoiceEnabled && retentionMinuteClips[atmRetentionSeconds]) {
+            if (_audioCtx && _audioCtx.state === 'suspended') _audioCtx.resume();
             const clip = retentionMinuteClips[atmRetentionSeconds];
             clip.currentTime = 0;
             clip.play().catch(() => {});
@@ -799,6 +800,7 @@ function startRetentionPhase() {
         retentionVoiceInterval = setInterval(() => {
             // Skip if a minute marker is playing at the same time
             if (!retentionMinuteClips[atmRetentionSeconds]) {
+                if (_audioCtx && _audioCtx.state === 'suspended') _audioCtx.resume();
                 const clip = retentionRandomClips[Math.floor(Math.random() * retentionRandomClips.length)];
                 clip.currentTime = 0;
                 clip.play().catch(() => {});
@@ -842,6 +844,9 @@ function startRecoveryPhase() {
         document.getElementById('atm-recovery-display').textContent = formatTime(remaining);
 
         if (atmVoiceEnabled) {
+            // Resume AudioContext if suspended (mobile browsers suspend it without user gesture)
+            if (_audioCtx && _audioCtx.state === 'suspended') _audioCtx.resume();
+
             if (remaining === 10) {
                 voiceAusatmen10.currentTime = 0;
                 voiceAusatmen10.play().catch(() => {});
@@ -1293,6 +1298,7 @@ function startWhRetention() {
 
         // Voice at minute marks (Anleitung)
         if (whRetentionGuideEnabled && retentionMinuteClips[whRetentionSeconds]) {
+            if (_audioCtx && _audioCtx.state === 'suspended') _audioCtx.resume();
             const clip = retentionMinuteClips[whRetentionSeconds];
             clip.currentTime = 0;
             clip.play().catch(() => {});
@@ -1303,6 +1309,7 @@ function startWhRetention() {
     if (whRetentionGuideEnabled) {
         whRetentionVoiceInterval = setInterval(() => {
             if (!retentionMinuteClips[whRetentionSeconds]) {
+                if (_audioCtx && _audioCtx.state === 'suspended') _audioCtx.resume();
                 const clip = retentionRandomClips[Math.floor(Math.random() * retentionRandomClips.length)];
                 clip.currentTime = 0;
                 clip.play().catch(() => {});
@@ -1360,6 +1367,9 @@ function startWhRecovery() {
         document.getElementById('wh-recovery-display').textContent = formatTime(remaining);
 
         if (whRetentionGuideEnabled) {
+            // Resume AudioContext if suspended (mobile browsers suspend it without user gesture)
+            if (_audioCtx && _audioCtx.state === 'suspended') _audioCtx.resume();
+
             if (remaining === 10) {
                 voiceAusatmen10.currentTime = 0;
                 voiceAusatmen10.play().catch(() => {});
