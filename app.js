@@ -823,16 +823,37 @@ document.getElementById('atmung-retention').addEventListener('click', (e) => {
     }
 });
 
-// --- Recovery Breath: inhale and hold 15s ---
+// --- Recovery Breath: inhale and hold 15s (with voice guidance like Wim Hof) ---
 
 function startRecoveryPhase() {
     showView('tracker-atmung', 'atmung-recovery');
     let remaining = 15;
     document.getElementById('atm-recovery-display').textContent = '0:15';
     if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+
+    // Play "Atme tief ein und halte deinen Atem an"
+    if (atmVoiceEnabled) {
+        voiceAtmeTiefEin.currentTime = 0;
+        voiceAtmeTiefEin.play().catch(() => {});
+    }
+
     atmInterval = setInterval(() => {
         remaining--;
         document.getElementById('atm-recovery-display').textContent = formatTime(remaining);
+
+        if (atmVoiceEnabled) {
+            if (remaining === 10) {
+                voiceAusatmen10.currentTime = 0;
+                voiceAusatmen10.play().catch(() => {});
+            } else if (remaining >= 1 && remaining <= 5 && voiceCountdown[remaining]) {
+                voiceCountdown[remaining].currentTime = 0;
+                voiceCountdown[remaining].play().catch(() => {});
+            } else if (remaining === 0) {
+                voiceJetzt.currentTime = 0;
+                voiceJetzt.play().catch(() => {});
+            }
+        }
+
         if (remaining <= 0) {
             clearInterval(atmInterval);
             atmInterval = null;
